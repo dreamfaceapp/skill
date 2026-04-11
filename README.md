@@ -1,6 +1,6 @@
 # DreamAPI Skill
 
-An AI agent skill that gives you access to 24 AI-powered tools for video generation, talking avatars, image editing, voice cloning, and more — all by simply describing what you want in natural language.
+An AI agent skill that gives you access to 25 AI-powered tools for video generation, talking avatars, image editing, voice cloning, and more — all by simply describing what you want in natural language.
 
 This skill follows the [Agent Skills specification](https://agentskills.io/specification) and works with any compatible AI coding assistant (Cursor, Claude Code, etc.).
 
@@ -31,7 +31,7 @@ The real power is chaining capabilities. Describe a goal and the AI orchestrates
 
 **Portrait restoration** — colorize a B&W photo, enhance resolution, then animate it into a short video clip.
 
-## Available Tools (24)
+## Available Tools (25)
 
 | Category | Tools | Script |
 |----------|-------|--------|
@@ -39,7 +39,7 @@ The real power is chaining capabilities. Describe a goal and the AI orchestrates
 | Image Generation (2) | Flux Text-to-Image, Flux Image-to-Image | `scripts/image_gen.py` |
 | Image Editing (6) | Colorize, Enhance, Outpainting, Inpainting, Swap Face, Remove BG | `scripts/image_edit.py` |
 | Video Generation (3) | Text-to-Video, Image-to-Video, Head-Tail-to-Video | `scripts/video_gen.py` |
-| Video Editing (3) | Swap Face Video, Video Matting, Composite | `scripts/video_edit.py` |
+| Video Editing (4) | Swap Face Video, Video Matting, Composite, Watermark Remover | `scripts/video_edit.py` |
 | Video Translate (1) | Video Translate 2.0 | `scripts/video_translate.py` |
 | Voice (5) | Voice Clone, TTS Clone, TTS Common, TTS Pro, Voice List | `scripts/voice.py` |
 

@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
-"""DreamAPI Video Editing — Swap Face for Video, Video Matting, Composite After Matting.
+"""DreamAPI Video Editing — Swap Face for Video, Video Matting, Composite After Matting, Video Watermark Remover.
 
 Subcommands:
-    swap-face   Replace faces in a video
-    matting     Extract subject from video background (alpha channel)
-    composite   Replace background of a matted video
+    swap-face        Replace faces in a video
+    matting          Extract subject from video background (alpha channel)
+    composite        Replace background of a matted video
+    watermark-remover Remove watermarks from videos
 
 Usage:
     python video_edit.py swap-face  run --src-video <url> --face <url|path>
     python video_edit.py matting    run --src-file <url>
     python video_edit.py composite  run --src-file <url> --alpha <url> --bg-type color --bg-color "232d84"
+    python video_edit.py watermark-remover run --video <url>
 """
 
 import argparse
@@ -25,6 +27,7 @@ from shared.upload import resolve_local_file
 SWAP_FACE_VIDEO_PATH = "/api/async/swap_face_for_video"
 MATTING_PATH = "/api/async/image_matting_process_video"
 COMPOSITE_PATH = "/api/async/image_matting_composite_video"
+WATERMARK_REMOVER_PATH = "/api/async/video_watermark_remover"
 
 DEFAULT_TIMEOUT = 600
 DEFAULT_INTERVAL = 5
@@ -126,6 +129,25 @@ def add_composite_args(p):
 
 
 # ---------------------------------------------------------------------------
+# Video Watermark Remover
+# ---------------------------------------------------------------------------
+
+def build_watermark_remover_body(args) -> dict:
+    body = {"video": resolve_local_file(args.video, quiet=args.quiet)}
+    if args.prompt is not None:
+        body["prompt"] = args.prompt
+    if args.seed is not None:
+        body["seed"] = args.seed
+    return body
+
+
+def add_watermark_remover_args(p):
+    p.add_argument("--video", required=True, help="Video URL or path (max 2K resolution, 120s)")
+    p.add_argument("--prompt", default=None, help="Optional prompt for watermark removal guidance")
+    p.add_argument("--seed", type=int, default=None, help="Random seed for reproducible results")
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -148,12 +170,18 @@ TOOLS = {
         "build_body": build_composite_body,
         "help": "Replace background of matted video",
     },
+    "watermark-remover": {
+        "endpoint": WATERMARK_REMOVER_PATH,
+        "add_args": add_watermark_remover_args,
+        "build_body": build_watermark_remover_body,
+        "help": "Remove watermarks from videos",
+    },
 }
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="DreamAPI Video Editing — swap face, matting, composite.",
+        description="DreamAPI Video Editing — swap face, matting, composite, watermark remover.",
     )
 
     tool_sub = parser.add_subparsers(dest="tool")
