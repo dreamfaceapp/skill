@@ -1,6 +1,6 @@
 ---
 name: dreamapi-skill
-description: "24 AI-powered tools for video generation, talking avatars, image editing, voice cloning, and more — powered by DreamAPI. Describe what you want and the agent handles the rest."
+description: "25 AI-powered tools for video generation, talking avatars, image editing, voice cloning, and more — powered by DreamAPI. Describe what you want and the agent handles the rest."
 metadata:
   tags: dreamapi, avatar, lipsync, video, image, voice, tts, flux, wan2.1, ai, api, text2image, image2video, face-swap, remove-bg, video-translate, voice-clone
   requires:
@@ -10,7 +10,7 @@ metadata:
 
 # DreamAPI Skill
 
-> 24 AI tools powered by [DreamAPI](https://api.newportai.com/) — from Newport AI.
+> 25 AI tools powered by [DreamAPI](https://api.newportai.com/) — from Newport AI.
 
 ## Execution Rule
 

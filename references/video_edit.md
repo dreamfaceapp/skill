@@ -1,6 +1,6 @@
 # Video Editing
 
-Three tools for video manipulation: face swap, matting, and compositing.
+Four tools for video manipulation: face swap, matting, compositing, and watermark removal.
 
 Script: `scripts/video_edit.py`
 
@@ -79,4 +79,42 @@ The typical video background replacement workflow is:
      --alpha <matting_alpha_url> \
      --bg-type image --bg-url <new_background>
    → get composite video
+```
+
+---
+
+## Video Watermark Remover
+
+Automatically removes watermarks from videos using advanced AI algorithms while preserving original content quality.
+
+- **Endpoint:** `POST /api/async/video_watermark_remover`
+- **Command:** `python video_edit.py watermark-remover run --video <url>`
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `--video` | string | Yes | Video URL or local path (max 2K resolution, 120s) |
+| `--prompt` | string | No | Optional prompt for watermark removal guidance |
+| `--seed` | integer | No | Random seed for reproducible results |
+
+### Video Constraints
+
+- Maximum resolution: 2K (2560×1440)
+- Maximum duration: 120 seconds
+- Constraint: `width × height × fps × duration < 1920 × 1080 × 30 × 120`
+
+### Billing
+
+| FPS | Credits / Second |
+|-----|------------------|
+| Up to 30 FPS | 1 credit |
+| Greater than 30 FPS | 2 credits |
+
+### Example
+
+```bash
+python video_edit.py watermark-remover run \
+  --video "https://example.com/video.mp4" \
+  --prompt "remove watermark"
 ```
