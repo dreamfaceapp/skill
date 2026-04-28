@@ -1,0 +1,152 @@
+#!/usr/bin/env python3
+"""DreamAPI ByteDance — Seedance 2.0 video generation with multi-modal inputs.
+
+Subcommands:
+    seedance  Generate video with text/image/video/audio inputs (Seedance 2.0)
+
+Usage:
+    python byte_dance.py seedance run --prompt "..." --resolution <480p|720p> --duration <4-15> [options]
+"""
+
+import argparse
+import json
+import os
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
+
+from shared.client import DreamAPIClient
+from shared.upload import resolve_local_file
+
+SEEDANCE_PATH = "/api/async/seedance_2.0"
+
+DEFAULT_TIMEOUT = 600
+DEFAULT_INTERVAL = 5
+
+
+def add_poll_args(p):
+    p.add_argument("--timeout", type=float, default=DEFAULT_TIMEOUT)
+    p.add_argument("--interval", type=float, default=DEFAULT_INTERVAL)
+
+
+def add_output_args(p):
+    p.add_argument("--json", action="store_true", help="Output full JSON")
+    p.add_argument("-q", "--quiet", action="store_true")
+
+
+def print_result(data, args, client):
+    output = client.extract_output(data)
+    if args.json:
+        print(json.dumps(data, indent=2, ensure_ascii=False))
+    else:
+        print(output.get("output_url", ""))
+
+
+# ---------------------------------------------------------------------------
+# Seedance 2.0
+# ---------------------------------------------------------------------------
+
+def build_seedance_body(args) -> dict:
+    body = {
+        "model": "seedance-2.0",
+        "prompt": args.prompt,
+        "resolution": args.resolution,
+        "duration": args.duration,
+    }
+    if args.images:
+        body["images"] = [resolve_local_file(img, quiet=args.quiet) for img in args.images]
+    if args.videos:
+        body["videos"] = args.videos
+    if args.audios:
+        body["audios"] = args.audios
+    if args.ratio:
+        body["ratio"] = args.ratio
+    if args.seed is not None:
+        body["seed"] = args.seed
+    if args.generate_audio:
+        body["generateAudio"] = True
+    return body
+
+
+def add_seedance_args(p):
+    p.add_argument("--prompt", required=True, help="Video description (max 1500 chars)")
+    p.add_argument("--resolution", required=True, choices=["480p", "720p"],
+                   help="Output resolution")
+    p.add_argument("--duration", required=True, type=int,
+                   help="Video duration in seconds (4-15)")
+    p.add_argument("--images", nargs="+", default=None,
+                   help="Reference image URLs or local paths (max 9)")
+    p.add_argument("--videos", nargs="+", default=None,
+                   help="Reference video URLs (max 3, total max 15s)")
+    p.add_argument("--audios", nargs="+", default=None,
+                   help="Audio URLs (max 3)")
+    p.add_argument("--ratio", default="adaptive",
+                   help="Aspect ratio (default: adaptive)")
+    p.add_argument("--seed", type=int, default=None,
+                   help="Random seed for reproducible results")
+    p.add_argument("--generate-audio", action="store_true",
+                   help="Generate audio for the video")
+
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
+
+TOOLS = {
+    "seedance": {
+        "endpoint": SEEDANCE_PATH,
+        "add_args": add_seedance_args,
+        "build_body": build_seedance_body,
+        "help": "Generate video with text/image/video/audio inputs (Seedance 2.0)",
+    },
+}
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="DreamAPI ByteDance — Seedance 2.0 video generation.",
+    )
+
+    tool_sub = parser.add_subparsers(dest="tool")
+    tool_sub.required = True
+
+    for tool_name, tool_info in TOOLS.items():
+        tool_parser = tool_sub.add_parser(tool_name, help=tool_info["help"])
+        action_sub = tool_parser.add_subparsers(dest="action")
+        action_sub.required = True
+
+        p_run = action_sub.add_parser("run", help="Submit + poll until done")
+        tool_info["add_args"](p_run)
+        add_poll_args(p_run)
+        add_output_args(p_run)
+
+        p_submit = action_sub.add_parser("submit", help="Submit only")
+        tool_info["add_args"](p_submit)
+        add_output_args(p_submit)
+
+        p_query = action_sub.add_parser("query", help="Poll existing taskId")
+        p_query.add_argument("--task-id", required=True)
+        add_poll_args(p_query)
+        add_output_args(p_query)
+
+    args = parser.parse_args()
+    client = DreamAPIClient()
+    tool_info = TOOLS[args.tool]
+
+    if args.action == "run":
+        body = tool_info["build_body"](args)
+        data = client.run_task(tool_info["endpoint"], body, timeout=args.timeout,
+                               interval=args.interval, quiet=args.quiet)
+        print_result(data, args, client)
+    elif args.action == "submit":
+        body = tool_info["build_body"](args)
+        task_id = client.submit_task(tool_info["endpoint"], body, quiet=args.quiet)
+        print(task_id)
+    elif args.action == "query":
+        data = client.poll_task(args.task_id, timeout=args.timeout,
+                                interval=args.interval, verbose=not args.quiet)
+        print_result(data, args, client)
+
+
+if __name__ == "__main__":
+    main()

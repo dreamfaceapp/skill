@@ -115,6 +115,7 @@ Decision tree:
 | Video Gen | `scripts/video_gen.py` | [video_gen.md](references/video_gen.md) | Text-to-Video, Image-to-Video, Head-Tail-to-Video (Wan2.1) |
 | Video Edit | `scripts/video_edit.py` | [video_edit.md](references/video_edit.md) | Swap Face Video, Video Matting, Composite |
 | Video Translate | `scripts/video_translate.py` | [video_translate.md](references/video_translate.md) | Video Translate 2.0 (en/zh/es) |
+| ByteDance | `scripts/byte_dance.py` | [byte_dance.md](references/byte_dance.md) | Seedance 2.0 |
 | Voice | `scripts/voice.py` | [voice.md](references/voice.md) | Voice Clone, TTS Clone, TTS Common, TTS Pro, Voice List |
 | User | `scripts/user.py` | [user.md](references/user.md) | Credit balance |
 
@@ -155,6 +156,9 @@ What does the user need?
 │
 ├─ Create transition between two frames?
 │  → video_gen.py head-tail
+│
+├─ Generate video with multi-modal inputs (text + images + video + audio)?
+│  → byte_dance.py seedance
 │
 ├─ Edit a video?
 │  ├─ Replace face → video_edit.py swap-face
@@ -197,6 +201,7 @@ What does the user need?
 | "Generate a video about..." | `video_gen.py text2video run` |
 | "Animate this image into a video" | `video_gen.py image2video run` |
 | "Create a transition between these two images" | `video_gen.py head-tail run` |
+| "Generate video with text, images, video or audio inputs" | `byte_dance.py seedance run` |
 | "Swap the face in this video" | `video_edit.py swap-face run` |
 | "Remove the video background" | `video_edit.py matting run` |
 | "Replace the video background with..." | `video_edit.py matting run` + `composite run` |
@@ -245,6 +250,7 @@ See [references/error_handling.md](references/error_handling.md) for error codes
 | Video Editing | Swap Face Video, Video Matting, Composite | 3 |
 | Video Translate | Video Translate 2.0 | 1 |
 | Voice | Voice Clone, TTS Clone, TTS Common, TTS Pro, Voice List | 5 |
-| **Total** | | **24** |
+| ByteDance | Seedance 2.0 | 1 |
+| **Total** | | **25** |
 
 > **Never promise capabilities that don't exist as modules.**

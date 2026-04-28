@@ -41,6 +41,7 @@ The real power is chaining capabilities. Describe a goal and the AI orchestrates
 | Video Generation (3) | Text-to-Video, Image-to-Video, Head-Tail-to-Video | `scripts/video_gen.py` |
 | Video Editing (4) | Swap Face Video, Video Matting, Composite, Watermark Remover | `scripts/video_edit.py` |
 | Video Translate (1) | Video Translate 2.0 | `scripts/video_translate.py` |
+| ByteDance (1) | Seedance 2.0 | `scripts/byte_dance.py` |
 | Voice (5) | Voice Clone, TTS Clone, TTS Common, TTS Pro, Voice List | `scripts/voice.py` |
 
 ## Installation
