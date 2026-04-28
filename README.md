@@ -1,6 +1,6 @@
 # DreamAPI Skill
 
-An AI agent skill that gives you access to 25 AI-powered tools for video generation, talking avatars, image editing, voice cloning, and more — all by simply describing what you want in natural language.
+An AI agent skill that gives you access to 26 AI-powered tools for video generation, talking avatars, image editing, voice cloning, and more — all by simply describing what you want in natural language.
 
 This skill follows the [Agent Skills specification](https://agentskills.io/specification) and works with any compatible AI coding assistant (Cursor, Claude Code, etc.).
 

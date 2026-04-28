@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-"""DreamAPI ByteDance — Seedance 2.0 video generation with multi-modal inputs.
+"""DreamAPI ByteDance — Seedance 2.0 video generation and Seedream image generation.
 
 Subcommands:
     seedance  Generate video with text/image/video/audio inputs (Seedance 2.0)
+    seedream  Generate high-quality images from text prompts (Seedream 4.5)
 
 Usage:
     python byte_dance.py seedance run --prompt "..." --resolution <480p|720p> --duration <4-15> [options]
+    python byte_dance.py seedream run --prompt "..." [options]
 """
 
 import argparse
@@ -19,6 +21,7 @@ from shared.client import DreamAPIClient
 from shared.upload import resolve_local_file
 
 SEEDANCE_PATH = "/api/async/seedance_2.0"
+SEEDREAM_PATH = "/api/async/seedream"
 
 DEFAULT_TIMEOUT = 600
 DEFAULT_INTERVAL = 5
@@ -89,6 +92,37 @@ def add_seedance_args(p):
 
 
 # ---------------------------------------------------------------------------
+# Seedream 4.5
+# ---------------------------------------------------------------------------
+
+def build_seedream_body(args) -> dict:
+    body = {
+        "model": args.model,
+        "prompt": args.prompt,
+    }
+    if args.images:
+        body["images"] = [resolve_local_file(img, quiet=args.quiet) for img in args.images]
+    if args.size:
+        body["size"] = args.size
+    if args.seed is not None:
+        body["seed"] = args.seed
+    return body
+
+
+def add_seedream_args(p):
+    p.add_argument("--model", default="seedream-4.5",
+                   help="Model version (default: seedream-4.5)")
+    p.add_argument("--prompt", required=True,
+                   help="Text prompt describing the image content to generate")
+    p.add_argument("--images", nargs="+", default=None,
+                   help="Reference image URLs or local paths for style guidance (max images)")
+    p.add_argument("--size", default="2048x2048",
+                   help="Image dimensions (default: 2048x2048, range: 1024x1024 to 4096x4096)")
+    p.add_argument("--seed", type=int, default=None,
+                   help="Random seed for reproducible results (default: -1 for random)")
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -99,12 +133,18 @@ TOOLS = {
         "build_body": build_seedance_body,
         "help": "Generate video with text/image/video/audio inputs (Seedance 2.0)",
     },
+    "seedream": {
+        "endpoint": SEEDREAM_PATH,
+        "add_args": add_seedream_args,
+        "build_body": build_seedream_body,
+        "help": "Generate high-quality images from text prompts (Seedream 4.5)",
+    },
 }
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="DreamAPI ByteDance — Seedance 2.0 video generation.",
+        description="DreamAPI ByteDance — Seedance 2.0 video generation and Seedream image generation.",
     )
 
     tool_sub = parser.add_subparsers(dest="tool")

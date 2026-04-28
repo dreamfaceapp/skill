@@ -1,6 +1,6 @@
 ---
 name: dreamapi-skill
-description: "25 AI-powered tools for video generation, talking avatars, image editing, voice cloning, and more — powered by DreamAPI. Describe what you want and the agent handles the rest."
+description: "26 AI-powered tools for video generation, talking avatars, image editing, voice cloning, and more — powered by DreamAPI. Describe what you want and the agent handles the rest."
 metadata:
   tags: dreamapi, avatar, lipsync, video, image, voice, tts, flux, wan2.1, ai, api, text2image, image2video, face-swap, remove-bg, video-translate, voice-clone
   requires:
@@ -10,7 +10,7 @@ metadata:
 
 # DreamAPI Skill
 
-> 25 AI tools powered by [DreamAPI](https://api.newportai.com/) — from Newport AI.
+> 26 AI tools powered by [DreamAPI](https://api.newportai.com/) — from Newport AI.
 
 ## Execution Rule
 
@@ -115,7 +115,7 @@ Decision tree:
 | Video Gen | `scripts/video_gen.py` | [video_gen.md](references/video_gen.md) | Text-to-Video, Image-to-Video, Head-Tail-to-Video (Wan2.1) |
 | Video Edit | `scripts/video_edit.py` | [video_edit.md](references/video_edit.md) | Swap Face Video, Video Matting, Composite |
 | Video Translate | `scripts/video_translate.py` | [video_translate.md](references/video_translate.md) | Video Translate 2.0 (en/zh/es) |
-| ByteDance | `scripts/byte_dance.py` | [byte_dance.md](references/byte_dance.md) | Seedance 2.0 |
+| ByteDance | `scripts/byte_dance.py` | [byte_dance.md](references/byte_dance.md) | Seedance 2.0, Seedream 4.5 |
 | Voice | `scripts/voice.py` | [voice.md](references/voice.md) | Voice Clone, TTS Clone, TTS Common, TTS Pro, Voice List |
 | User | `scripts/user.py` | [user.md](references/user.md) | Credit balance |
 
@@ -160,6 +160,9 @@ What does the user need?
 ├─ Generate video with multi-modal inputs (text + images + video + audio)?
 │  → byte_dance.py seedance
 │
+├─ Generate an image from text with advanced AI model?
+│  → byte_dance.py seedream
+│
 ├─ Edit a video?
 │  ├─ Replace face → video_edit.py swap-face
 │  ├─ Remove background → video_edit.py matting
@@ -202,6 +205,7 @@ What does the user need?
 | "Animate this image into a video" | `video_gen.py image2video run` |
 | "Create a transition between these two images" | `video_gen.py head-tail run` |
 | "Generate video with text, images, video or audio inputs" | `byte_dance.py seedance run` |
+| "Generate high-quality image from text" | `byte_dance.py seedream run` |
 | "Swap the face in this video" | `video_edit.py swap-face run` |
 | "Remove the video background" | `video_edit.py matting run` |
 | "Replace the video background with..." | `video_edit.py matting run` + `composite run` |
@@ -250,7 +254,7 @@ See [references/error_handling.md](references/error_handling.md) for error codes
 | Video Editing | Swap Face Video, Video Matting, Composite | 3 |
 | Video Translate | Video Translate 2.0 | 1 |
 | Voice | Voice Clone, TTS Clone, TTS Common, TTS Pro, Voice List | 5 |
-| ByteDance | Seedance 2.0 | 1 |
-| **Total** | | **25** |
+| ByteDance | Seedance 2.0, Seedream 4.5 | 2 |
+| **Total** | | **26** |
 
 > **Never promise capabilities that don't exist as modules.**

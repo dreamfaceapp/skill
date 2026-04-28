@@ -1,6 +1,6 @@
 # ByteDance
 
-Video generation tools powered by ByteDance models.
+Video generation and image generation tools powered by ByteDance models.
 
 Script: `scripts/byte_dance.py`
 
@@ -30,3 +30,34 @@ Generate videos using the Seedance 2.0 model with support for text prompts, refe
 - The model does not support reference images or videos containing real human faces.
 - Audio is only effective when images or videos are provided.
 - Use `--seed` for reproducible results.
+
+## Seedream 4.5
+
+Generate high-quality images from text prompts using the Seedream model with support for reference images, custom sizes, and seed control.
+
+- **Endpoint:** `POST /api/async/seedream`
+- **Command:** `python byte_dance.py seedream run --prompt "..." [options]`
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `--model` | string | No | Model version (default: seedream-4.5) |
+| `--prompt` | string | Yes | Text prompt describing the image content |
+| `--images` | string | No | Reference image URLs or local paths for style guidance |
+| `--size` | string | No | Image dimensions (default: 2048x2048, range: 1024x1024 to 4096x4096) |
+| `--seed` | integer | No | Random seed for reproducible results (default: -1 for random) |
+
+### Tips
+
+- Use `--model` to specify a different model version if needed.
+- Use `--seed` for reproducible results.
+- Image size must be between 1024x1024 and 4096x4096.
+
+### Model Pricing
+
+| Model Version | Credits per Image |
+|---------------|------------------|
+| seedream-4.0 | 6 credits |
+| seedream-4.5 | 8 credits |
+| seedream-5.0-lite | 7 credits |
