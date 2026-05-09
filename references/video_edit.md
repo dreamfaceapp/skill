@@ -1,6 +1,6 @@
 # Video Editing
 
-Four tools for video manipulation: face swap, matting, compositing, and watermark removal.
+Five tools for video manipulation: face swap, matting, compositing, watermark removal, and video enhancement.
 
 Script: `scripts/video_edit.py`
 
@@ -117,4 +117,41 @@ Automatically removes watermarks from videos using advanced AI algorithms while 
 python video_edit.py watermark-remover run \
   --video "https://example.com/video.mp4" \
   --prompt "remove watermark"
+```
+
+---
+
+## Video Enhance
+
+Upscale and improve video quality using advanced super-resolution algorithms. Enhances video clarity, sharpness, and overall visual quality while preserving the original content.
+
+- **Endpoint:** `POST /api/async/video_super_resolution`
+- **Command:** `python video_edit.py video-enhance run --src-video <url>`
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `--src-video` | string | Yes | Source video URL or local path to enhance |
+
+### Supported Formats
+
+- Common video formats: MP4, AVI, MOV, etc.
+
+### Billing
+
+| Duration | Credits |
+|----------|---------|
+| 1 second | 5 credits |
+| 10 seconds | 50 credits |
+| 30 seconds | 150 credits |
+| 1 minute | 300 credits |
+
+Pricing: **5 credits per second of video processed**.
+
+### Example
+
+```bash
+python video_edit.py video-enhance run \
+  --src-video "https://example.com/video.mp4"
 ```

@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
-"""DreamAPI Video Editing — Swap Face for Video, Video Matting, Composite After Matting, Video Watermark Remover.
+"""DreamAPI Video Editing — Swap Face for Video, Video Matting, Composite After Matting, Video Watermark Remover, Video Enhance.
 
 Subcommands:
     swap-face        Replace faces in a video
     matting          Extract subject from video background (alpha channel)
     composite        Replace background of a matted video
     watermark-remover Remove watermarks from videos
+    video-enhance    Upscale and improve video quality using super-resolution
 
 Usage:
     python video_edit.py swap-face  run --src-video <url> --face <url|path>
     python video_edit.py matting    run --src-file <url>
     python video_edit.py composite  run --src-file <url> --alpha <url> --bg-type color --bg-color "232d84"
     python video_edit.py watermark-remover run --video <url>
+    python video_edit.py video-enhance run --src-video <url>
 """
 
 import argparse
@@ -28,6 +30,7 @@ SWAP_FACE_VIDEO_PATH = "/api/async/swap_face_for_video"
 MATTING_PATH = "/api/async/image_matting_process_video"
 COMPOSITE_PATH = "/api/async/image_matting_composite_video"
 WATERMARK_REMOVER_PATH = "/api/async/video_watermark_remover"
+VIDEO_ENHANCE_PATH = "/api/async/video_super_resolution"
 
 DEFAULT_TIMEOUT = 600
 DEFAULT_INTERVAL = 5
@@ -148,6 +151,20 @@ def add_watermark_remover_args(p):
 
 
 # ---------------------------------------------------------------------------
+# Video Enhance
+# ---------------------------------------------------------------------------
+
+def build_video_enhance_body(args) -> dict:
+    return {
+        "srcVideoUrl": resolve_local_file(args.src_video, quiet=args.quiet),
+    }
+
+
+def add_video_enhance_args(p):
+    p.add_argument("--src-video", required=True, help="Source video URL or local path to enhance")
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -176,12 +193,18 @@ TOOLS = {
         "build_body": build_watermark_remover_body,
         "help": "Remove watermarks from videos",
     },
+    "video-enhance": {
+        "endpoint": VIDEO_ENHANCE_PATH,
+        "add_args": add_video_enhance_args,
+        "build_body": build_video_enhance_body,
+        "help": "Upscale and improve video quality using super-resolution",
+    },
 }
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="DreamAPI Video Editing — swap face, matting, composite, watermark remover.",
+        description="DreamAPI Video Editing — swap face, matting, composite, watermark remover, video enhance.",
     )
 
     tool_sub = parser.add_subparsers(dest="tool")
