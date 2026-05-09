@@ -1,8 +1,8 @@
 """Upload local files to DreamAPI Storage and return a public URL.
 
 DreamAPI storage uses a three-step flow:
-1. Get Upload Policy — obtain presigned upload URL and fileKey
-2. Upload — PUT the file to the presigned URL
+1. Get Upload Policy — obtain authentication parameters for OSS upload
+2. Upload — POST multipart form data to the OSS endpoint
 3. Get Upload Result — retrieve the final public URL
 
 Used internally by scripts to auto-upload local file paths.
@@ -63,9 +63,9 @@ def upload_file(
     """Upload a local file to DreamAPI Storage and return the public URL.
 
     Three-step flow:
-    1. GET /api/getUploadPolicy → presigned URL + fileKey
-    2. PUT file to presigned URL
-    3. POST /api/getUploadResult → final public URL
+    1. POST /api/file/v1/get_policy → OSS upload credentials
+    2. POST multipart form to OSS endpoint
+    3. POST /api/file/v1/policy_upload_finish → final public URL
     """
     if client is None:
         client = DreamAPIClient()
@@ -78,43 +78,63 @@ def upload_file(
     if not quiet:
         print(f"[1/3] Requesting upload policy...", file=sys.stderr)
 
-    policy_data = client.get(
-        "/api/getUploadPolicy",
-        params={"fileName": file_name},
+    policy_data = client.post(
+        "/api/file/v1/get_policy",
+        json={"scene": "Dream-CN"},
     )
 
-    upload_url = policy_data.get("uploadUrl", "")
-    file_key = policy_data.get("fileKey", "")
+    host = policy_data.get("host", "")
+    upload_dir = policy_data.get("dir", "")
+    access_id = policy_data.get("accessId", "")
+    policy = policy_data.get("policy", "")
+    signature = policy_data.get("signature", "")
+    callback = policy_data.get("callback", "")
+    req_id = policy_data.get("reqId", "")
 
-    if not upload_url or not file_key:
-        raise RuntimeError("Failed to get upload policy: missing uploadUrl or fileKey")
+    if not all([host, upload_dir, access_id, policy, signature]):
+        raise RuntimeError("Failed to get complete upload policy from response")
 
     # Step 2: Upload file
     if not quiet:
         size_mb = os.path.getsize(file_path) / (1024 * 1024)
-        print(f"[2/3] Uploading {file_name} ({size_mb:.1f} MB)...", file=sys.stderr)
+        print(f"[2/3] Uploading {file_name} ({size_mb:.2f} MB)...", file=sys.stderr)
+
+    key = upload_dir + file_name
 
     with open(file_path, "rb") as f:
-        resp = requests.put(
-            upload_url,
-            data=f,
-            headers={"Content-Type": mime},
-            timeout=300,
-        )
+        files = {
+            "key": (None, key),
+            "policy": (None, policy),
+            "OSSAccessKeyId": (None, access_id),
+            "signature": (None, signature),
+            "callback": (None, callback),
+            "success_action_status": (None, "200"),
+            "file": (file_name, f.read(), mime),
+        }
+
+        resp = requests.post(host, files=files, timeout=300)
+
     resp.raise_for_status()
+    upload_result = resp.json()
+
+    # Get reqId from upload response or policy response
+    upload_req_id = upload_result.get("data", {}).get("reqId", req_id)
+
+    if not upload_req_id:
+        raise RuntimeError("Failed to get reqId from upload response")
 
     # Step 3: Get upload result
     if not quiet:
         print("[3/3] Verifying upload...", file=sys.stderr)
 
     result_data = client.post(
-        "/api/getUploadResult",
-        json={"fileKey": file_key},
+        "/api/file/v1/policy_upload_finish",
+        json={"reqId": upload_req_id},
     )
 
-    file_url = result_data.get("fileUrl", "")
+    file_url = result_data.get("url", "")
     if not file_url:
-        raise RuntimeError("Upload verification failed: no fileUrl returned")
+        raise RuntimeError("Upload verification failed: no URL returned")
 
     if not quiet:
         print(f"Upload complete: {file_url}", file=sys.stderr)
