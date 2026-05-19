@@ -1,8 +1,8 @@
 ---
 name: dreamapi-skill
-description: "27 AI-powered tools for video generation, talking avatars, image editing, voice cloning, and more — powered by DreamAPI. Describe what you want and the agent handles the rest."
+description: "29 AI-powered tools for video generation, talking avatars, image editing, voice cloning, Google Gemini image generation, and more — powered by DreamAPI. Describe what you want and the agent handles the rest."
 metadata:
-  tags: dreamapi, avatar, lipsync, video, image, voice, tts, flux, wan2.1, ai, api, text2image, image2video, face-swap, remove-bg, video-translate, voice-clone
+  tags: dreamapi, avatar, lipsync, video, image, voice, tts, flux, wan2.1, ai, api, text2image, image2video, face-swap, remove-bg, video-translate, voice-clone, google-gemini, image-gen
   requires:
     bins: [python3]
   primaryEnv: DREAMAPI_API_KEY
@@ -10,7 +10,7 @@ metadata:
 
 # DreamAPI Skill
 
-> 27 AI tools powered by [DreamAPI](https://api.newportai.com/) — from Newport AI.
+> 29 AI tools powered by [DreamAPI](https://api.newportai.com/) — from Newport AI.
 
 ## Execution Rule
 
@@ -34,6 +34,7 @@ metadata:
 |-----------|---------------|
 | Avatar (LipSync / DreamAvatar / Dreamact) | ~2–5 min |
 | Image Generation (Flux) | ~30s–1 min |
+| Google Gemini Image | ~30s–1 min |
 | Image Editing (Colorize / Enhance / etc.) | ~30s–1 min |
 | Video Generation (Wan2.1) | ~3–5 min |
 | Video Editing (Swap Face / Matting) | ~2–5 min |
@@ -116,6 +117,7 @@ Decision tree:
 | Video Edit | `scripts/video_edit.py` | [video_edit.md](references/video_edit.md) | Swap Face Video, Video Matting, Composite, Video Enhance |
 | Video Translate | `scripts/video_translate.py` | [video_translate.md](references/video_translate.md) | Video Translate 2.0 (en/zh/es) |
 | ByteDance | `scripts/byte_dance.py` | [byte_dance.md](references/byte_dance.md) | Seedance 2.0, Seedream 4.5 |
+| Google | `scripts/google_gen.py` | [google_gen.md](references/google_gen.md) | Nano Banana 2, Nano Banana Pro |
 | Voice | `scripts/voice.py` | [voice.md](references/voice.md) | Voice Clone, TTS Clone, TTS Common, TTS Pro, Voice List |
 | User | `scripts/user.py` | [user.md](references/user.md) | Credit balance |
 
@@ -136,6 +138,10 @@ What does the user need?
 │
 ├─ Generate an image from text?
 │  → image_gen.py text2image
+│
+├─ Generate an image from text with Google Gemini model?
+│  ├─ Fast & cost-efficient → google_gen.py nano-banana-2
+│  └─ Premium high-fidelity → google_gen.py nano-banana-pro
 │
 ├─ Transform an existing image?
 │  → image_gen.py image2image
@@ -207,6 +213,8 @@ What does the user need?
 | "Create a transition between these two images" | `video_gen.py head-tail run` |
 | "Generate video with text, images, video or audio inputs" | `byte_dance.py seedance run` |
 | "Generate high-quality image from text" | `byte_dance.py seedream run` |
+| "Generate image with Google Gemini (fast)" | `google_gen.py nano-banana-2 run` |
+| "Generate premium image with Google Gemini" | `google_gen.py nano-banana-pro run` |
 | "Swap the face in this video" | `video_edit.py swap-face run` |
 | "Remove the video background" | `video_edit.py matting run` |
 | "Replace the video background with..." | `video_edit.py matting run` + `composite run` |
@@ -257,6 +265,7 @@ See [references/error_handling.md](references/error_handling.md) for error codes
 | Video Translate | Video Translate 2.0 | 1 |
 | Voice | Voice Clone, TTS Clone, TTS Common, TTS Pro, Voice List | 5 |
 | ByteDance | Seedance 2.0, Seedream 4.5 | 2 |
-| **Total** | | **27** |
+| Google | Nano Banana 2, Nano Banana Pro | 2 |
+| **Total** | | **29** |
 
 > **Never promise capabilities that don't exist as modules.**
