@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""DreamAPI Image Editing — Colorize, Enhance, Outpainting, Inpainting, Swap Face, Remove BG.
+"""DreamAPI Image Editing — Colorize, Enhance, Outpainting, Inpainting, Swap Face, Remove BG, Virtual Try-On.
 
 Subcommands:
     colorize    Add color to B&W photos (requires human face)
@@ -8,6 +8,7 @@ Subcommands:
     inpainting  Fill masked regions with AI-generated content
     swap-face   Replace face in target image
     remove-bg   Remove background from image
+    try-on      Virtual Try-On — transfer clothing onto a model image
 
 Usage:
     python image_edit.py colorize   run --url <image_url>
@@ -16,6 +17,7 @@ Usage:
     python image_edit.py inpainting run --url <url> --mask <url> --prompt "..."
     python image_edit.py swap-face  run --url <url> --face <url>
     python image_edit.py remove-bg  run --url <url|path>
+    python image_edit.py try-on     run --model <url|path> --upper <url|path> --lower <url|path> [options]
 """
 
 import argparse
@@ -34,6 +36,7 @@ OUTPAINTING_PATH = "/api/async/outpainting"
 INPAINTING_PATH = "/api/async/inpainting"
 SWAP_FACE_PATH = "/api/async/swap_face"
 REMOVE_BG_PATH = "/api/async/remove_background"
+TRYON_PATH = "/api/async/tryon_clothes"
 
 DEFAULT_TIMEOUT = 600
 DEFAULT_INTERVAL = 5
@@ -132,6 +135,42 @@ def add_remove_bg_args(p):
 
 
 # ---------------------------------------------------------------------------
+# Virtual Try-On
+# ---------------------------------------------------------------------------
+
+def build_tryon_body(args) -> dict:
+    body = {
+        "modelImage": resolve_local_file(args.model, quiet=args.quiet),
+    }
+    if args.upper:
+        body["upperClothes"] = resolve_local_file(args.upper, quiet=args.quiet)
+    if args.lower:
+        body["lowerClothes"] = resolve_local_file(args.lower, quiet=args.quiet)
+    if args.overall:
+        body["overallClothes"] = resolve_local_file(args.overall, quiet=args.quiet)
+    if args.prompt is not None:
+        body["prompt"] = args.prompt
+    if args.enable_shoes is not None:
+        body["enableShoes"] = args.enable_shoes
+    if args.width is not None:
+        body["width"] = args.width
+    if args.height is not None:
+        body["height"] = args.height
+    return body
+
+
+def add_tryon_args(p):
+    p.add_argument("--model", required=True, help="Model image URL or local path")
+    p.add_argument("--upper", default=None, help="Upper garment image URL or local path (shirt, jacket, top)")
+    p.add_argument("--lower", default=None, help="Lower garment image URL or local path (pants, skirt, shorts)")
+    p.add_argument("--overall", default=None, help="One-piece garment image URL or local path (dress, jumpsuit)")
+    p.add_argument("--prompt", default=None, help="Text prompt to guide generation")
+    p.add_argument("--enable-shoes", type=bool, default=None, help="Enable shoe generation (default: true)")
+    p.add_argument("--width", type=int, default=None, help="Output width in pixels (default: 768)")
+    p.add_argument("--height", type=int, default=None, help="Output height in pixels (default: 1378)")
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -172,12 +211,18 @@ TOOLS = {
         "build_body": build_remove_bg_body,
         "help": "Remove background from image",
     },
+    "try-on": {
+        "endpoint": TRYON_PATH,
+        "add_args": add_tryon_args,
+        "build_body": build_tryon_body,
+        "help": "Virtual Try-On — transfer clothing onto a model image",
+    },
 }
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="DreamAPI Image Editing — colorize, enhance, outpainting, inpainting, swap face, remove bg.",
+        description="DreamAPI Image Editing — colorize, enhance, outpainting, inpainting, swap face, remove bg, virtual try-on.",
     )
 
     tool_sub = parser.add_subparsers(dest="tool")

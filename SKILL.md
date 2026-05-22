@@ -1,8 +1,8 @@
 ---
 name: dreamapi-skill
-description: "29 AI-powered tools for video generation, talking avatars, image editing, voice cloning, Google Gemini image generation, and more — powered by DreamAPI. Describe what you want and the agent handles the rest."
+description: "30 AI-powered tools for video generation, talking avatars, image editing, voice cloning, Google Gemini image generation, virtual try-on, and more — powered by DreamAPI. Describe what you want and the agent handles the rest."
 metadata:
-  tags: dreamapi, avatar, lipsync, video, image, voice, tts, flux, wan2.1, ai, api, text2image, image2video, face-swap, remove-bg, video-translate, voice-clone, google-gemini, image-gen
+  tags: dreamapi, avatar, lipsync, video, image, voice, tts, flux, wan2.1, ai, api, text2image, image2video, face-swap, remove-bg, video-translate, voice-clone, google-gemini, image-gen, try-on
   requires:
     bins: [python3]
   primaryEnv: DREAMAPI_API_KEY
@@ -10,7 +10,7 @@ metadata:
 
 # DreamAPI Skill
 
-> 29 AI tools powered by [DreamAPI](https://api.newportai.com/) — from Newport AI.
+> 30 AI tools powered by [DreamAPI](https://api.newportai.com/) — from Newport AI.
 
 ## Execution Rule
 
@@ -36,6 +36,7 @@ metadata:
 | Image Generation (Flux) | ~30s–1 min |
 | Google Gemini Image | ~30s–1 min |
 | Image Editing (Colorize / Enhance / etc.) | ~30s–1 min |
+| Virtual Try-On | ~30s–1 min |
 | Video Generation (Wan2.1) | ~3–5 min |
 | Video Editing (Swap Face / Matting) | ~2–5 min |
 | Video Translate | ~3–5 min |
@@ -112,7 +113,7 @@ Decision tree:
 | Auth | `scripts/auth.py` | [auth.md](references/auth.md) | API key management — login, status, logout |
 | Avatar | `scripts/avatar.py` | [avatar.md](references/avatar.md) | LipSync, LipSync 2.0, DreamAvatar 3.0 Fast, Dreamact |
 | Image Gen | `scripts/image_gen.py` | [image_gen.md](references/image_gen.md) | Flux Text-to-Image, Flux Image-to-Image |
-| Image Edit | `scripts/image_edit.py` | [image_edit.md](references/image_edit.md) | Colorize, Enhance, Outpainting, Inpainting, Swap Face, Remove BG |
+| Image Edit | `scripts/image_edit.py` | [image_edit.md](references/image_edit.md) | Colorize, Enhance, Outpainting, Inpainting, Swap Face, Remove BG, Virtual Try-On |
 | Video Gen | `scripts/video_gen.py` | [video_gen.md](references/video_gen.md) | Text-to-Video, Image-to-Video, Head-Tail-to-Video (Wan2.1) |
 | Video Edit | `scripts/video_edit.py` | [video_edit.md](references/video_edit.md) | Swap Face Video, Video Matting, Composite, Video Enhance |
 | Video Translate | `scripts/video_translate.py` | [video_translate.md](references/video_translate.md) | Video Translate 2.0 (en/zh/es) |
@@ -152,7 +153,8 @@ What does the user need?
 │  ├─ Extend borders → image_edit.py outpainting
 │  ├─ Fill/replace region → image_edit.py inpainting
 │  ├─ Replace face → image_edit.py swap-face
-│  └─ Remove background → image_edit.py remove-bg
+│  ├─ Remove background → image_edit.py remove-bg
+│  └─ Try on clothes virtually → image_edit.py try-on
 │
 ├─ Generate a video from text?
 │  → video_gen.py text2video
@@ -208,6 +210,7 @@ What does the user need?
 | "Fill in this area of the image" | `image_edit.py inpainting run` |
 | "Swap the face in this photo" | `image_edit.py swap-face run` |
 | "Remove the background" | `image_edit.py remove-bg run` |
+| "Try on clothes virtually" | `image_edit.py try-on run` |
 | "Generate a video about..." | `video_gen.py text2video run` |
 | "Animate this image into a video" | `video_gen.py image2video run` |
 | "Create a transition between these two images" | `video_gen.py head-tail run` |
@@ -259,13 +262,13 @@ See [references/error_handling.md](references/error_handling.md) for error codes
 |----------|-------|-------|
 | Avatar | LipSync, LipSync 2.0, DreamAvatar 3.0 Fast, Dreamact | 4 |
 | Image Generation | Flux Text-to-Image, Flux Image-to-Image | 2 |
-| Image Editing | Colorize, Enhance, Outpainting, Inpainting, Swap Face, Remove BG | 6 |
+| Image Editing | Colorize, Enhance, Outpainting, Inpainting, Swap Face, Remove BG, Virtual Try-On | 7 |
 | Video Generation | Text-to-Video, Image-to-Video, Head-Tail-to-Video | 3 |
 | Video Editing | Swap Face Video, Video Matting, Composite, Video Enhance | 4 |
 | Video Translate | Video Translate 2.0 | 1 |
 | Voice | Voice Clone, TTS Clone, TTS Common, TTS Pro, Voice List | 5 |
 | ByteDance | Seedance 2.0, Seedream 4.5 | 2 |
 | Google | Nano Banana 2, Nano Banana Pro | 2 |
-| **Total** | | **29** |
+| **Total** | | **30** |
 
 > **Never promise capabilities that don't exist as modules.**
