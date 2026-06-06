@@ -1,8 +1,8 @@
 ---
 name: dreamapi-skill
-description: "25 AI-powered tools for video generation, talking avatars, image editing, voice cloning, and more — powered by DreamAPI. Describe what you want and the agent handles the rest."
+description: "26 AI-powered tools for video generation, talking avatars, image editing, voice cloning, and more — powered by DreamAPI. Describe what you want and the agent handles the rest."
 metadata:
-  tags: dreamapi, avatar, lipsync, video, image, voice, tts, flux, wan2.1, ai, api, text2image, image2video, face-swap, remove-bg, video-translate, voice-clone
+  tags: dreamapi, avatar, lipsync, video, image, voice, tts, flux, wan2.1, ai, api, text2image, image2video, face-swap, remove-bg, video-translate, voice-clone, openai, gpt-image
   requires:
     bins: [python3]
   primaryEnv: DREAMAPI_API_KEY
@@ -10,7 +10,7 @@ metadata:
 
 # DreamAPI Skill
 
-> 25 AI tools powered by [DreamAPI](https://api.newportai.com/) — from Newport AI.
+> 26 AI tools powered by [DreamAPI](https://api.newportai.com/) — from Newport AI.
 
 ## Execution Rule
 
@@ -34,6 +34,7 @@ metadata:
 |-----------|---------------|
 | Avatar (LipSync / DreamAvatar / Dreamact) | ~2–5 min |
 | Image Generation (Flux) | ~30s–1 min |
+| Image Generation (GPT Image 2) | ~30s–1 min |
 | Image Editing (Colorize / Enhance / etc.) | ~30s–1 min |
 | Video Generation (Wan2.1) | ~3–5 min |
 | Video Editing (Swap Face / Matting) | ~2–5 min |
@@ -116,6 +117,7 @@ Decision tree:
 | Video Edit | `scripts/video_edit.py` | [video_edit.md](references/video_edit.md) | Swap Face Video, Video Matting, Composite |
 | Video Translate | `scripts/video_translate.py` | [video_translate.md](references/video_translate.md) | Video Translate 2.0 (en/zh/es) |
 | ByteDance | `scripts/byte_dance.py` | [byte_dance.md](references/byte_dance.md) | Seedance 2.0 |
+| OpenAI | `scripts/open_ai.py` | [open_ai.md](references/open_ai.md) | GPT Image 2 |
 | Voice | `scripts/voice.py` | [voice.md](references/voice.md) | Voice Clone, TTS Clone, TTS Common, TTS Pro, Voice List |
 | User | `scripts/user.py` | [user.md](references/user.md) | Credit balance |
 
@@ -135,10 +137,12 @@ What does the user need?
 │  → avatar.py dreamact
 │
 ├─ Generate an image from text?
-│  → image_gen.py text2image
+│  ├─ Need OpenAI quality / editing with reference images → open_ai.py gpt-image
+│  └─ Standard generation → image_gen.py text2image
 │
 ├─ Transform an existing image?
-│  → image_gen.py image2image
+│  ├─ With OpenAI model → open_ai.py gpt-image --images
+│  └─ With Flux model → image_gen.py image2image
 │
 ├─ Edit an image?
 │  ├─ Colorize B&W photo → image_edit.py colorize
@@ -191,6 +195,7 @@ What does the user need?
 | "Generate an avatar from this photo and audio" | `avatar.py dreamavatar run` |
 | "Make this character do the dance in this video" | `avatar.py dreamact run` |
 | "Generate an image of..." | `image_gen.py text2image run` |
+| "Generate an image with OpenAI..." | `open_ai.py gpt-image run` |
 | "Modify this image to..." | `image_gen.py image2image run` |
 | "Colorize this old photo" | `image_edit.py colorize run` |
 | "Enhance this blurry image" | `image_edit.py enhance run` |
@@ -245,12 +250,13 @@ See [references/error_handling.md](references/error_handling.md) for error codes
 |----------|-------|-------|
 | Avatar | LipSync, LipSync 2.0, DreamAvatar 3.0 Fast, Dreamact | 4 |
 | Image Generation | Flux Text-to-Image, Flux Image-to-Image | 2 |
+| OpenAI | GPT Image 2 | 1 |
 | Image Editing | Colorize, Enhance, Outpainting, Inpainting, Swap Face, Remove BG | 6 |
 | Video Generation | Text-to-Video, Image-to-Video, Head-Tail-to-Video | 3 |
 | Video Editing | Swap Face Video, Video Matting, Composite | 3 |
 | Video Translate | Video Translate 2.0 | 1 |
 | Voice | Voice Clone, TTS Clone, TTS Common, TTS Pro, Voice List | 5 |
 | ByteDance | Seedance 2.0 | 1 |
-| **Total** | | **25** |
+| **Total** | | **26** |
 
 > **Never promise capabilities that don't exist as modules.**
