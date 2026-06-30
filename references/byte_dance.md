@@ -9,14 +9,14 @@ Script: `scripts/byte_dance.py`
 Generate videos using the Seedance 2.0 model with support for text prompts, reference images, reference videos, and audio.
 
 - **Endpoint:** `POST /api/async/seedance_2.0`
-- **Command:** `python byte_dance.py seedance run --prompt "..." --resolution <480p|720p> --duration <4-15> [options]`
+- **Command:** `python byte_dance.py seedance run --prompt "..." --resolution <480p|720p|1080p|4k> --duration <4-15> [options]`
 
 ### Parameters
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `--prompt` | string | Yes | Video description (max 1500 chars) |
-| `--resolution` | string | Yes | Output resolution: "480p" or "720p" |
+| `--resolution` | string | Yes | Output resolution: "480p", "720p", "1080p", or "4k" |
 | `--duration` | integer | Yes | Video duration in seconds (4-15) |
 | `--images` | string | No | Reference image URLs or local paths (max 9) |
 | `--videos` | string | No | Reference video URLs (max 3, total max 15s) |
@@ -30,6 +30,51 @@ Generate videos using the Seedance 2.0 model with support for text prompts, refe
 - The model does not support reference images or videos containing real human faces.
 - Audio is only effective when images or videos are provided.
 - Use `--seed` for reproducible results.
+
+### Model Pricing
+
+| Model Version | Resolution | Credits / Second |
+|---------------|------------|------------------|
+| seedance-2.0 | 480p | 30 |
+| seedance-2.0 | 720p | 70 |
+| seedance-2.0 | 1080p | 156 |
+| seedance-2.0 | 4k | 369 |
+| seedance-2.0-fast | 480p | 24 |
+| seedance-2.0-fast | 720p | 53 |
+
+## Seedance 2.0 Mini
+
+Generate videos at the lowest cost using the Seedance 2.0 Mini model, ideal for quick iterations, previews, and budget-conscious projects.
+
+- **Endpoint:** `POST /api/async/seedance_2.0` (shared with Seedance 2.0)
+- **Command:** `python byte_dance.py seedance-mini run --prompt "..." --resolution <480p|720p> --duration <4-15> [options]`
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `--prompt` | string | Yes | Video description (max 1500 chars) |
+| `--resolution` | string | Yes | Output resolution: "480p" or "720p" only |
+| `--duration` | integer | Yes | Video duration in seconds (4-15) |
+| `--images` | string | No | Reference image URLs or local paths (max 9) |
+| `--videos` | string | No | Reference video URLs (max 3, total max 15s) |
+| `--audios` | string | No | Audio URLs (max 3) |
+| `--ratio` | string | No | Aspect ratio (default: adaptive) |
+| `--seed` | integer | No | Random seed for reproducible results |
+| `--generate-audio` | boolean | No | Generate audio for the video (default: false) |
+
+### Tips
+
+- Seedance 2.0 Mini supports only 480p and 720p resolutions. It does not support 1080p or 4k.
+- All other parameters and behavior are identical to Seedance 2.0.
+- The model does not support reference images or videos containing real human faces.
+
+### Model Pricing
+
+| Model Version | Resolution | Credits / Second |
+|---------------|------------|------------------|
+| seedance-2.0-mini | 480p | 15 |
+| seedance-2.0-mini | 720p | 33 |
 
 ## Seedream 4.5
 
