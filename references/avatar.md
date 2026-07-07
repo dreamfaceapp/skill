@@ -94,6 +94,15 @@ Motion-driven avatar — character from reference images performs motions from a
 | `--video` | string | Yes | Driving video URL or local path (max 1 min) |
 | `--images` | string[] | Yes | Reference image URLs or local paths |
 | `--seed` | integer | No | Seed for reproducibility (default: 42) |
+| `--resolution` | choice | No | Processing resolution: `480P`, `720P` (default: `480P`) |
+| `--task-mode` | choice | No | Generation mode: `replace_body` (swap character, keep background), `pose2v` (pose following) (default: `replace_body`) |
+
+### Pricing
+
+| Resolution | Credits / Second |
+|------------|-----------------|
+| 480P       | 4.0             |
+| 720P       | 8.0             |
 
 ---
 
