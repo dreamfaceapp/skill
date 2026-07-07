@@ -13,7 +13,7 @@ Usage:
     python avatar.py lipsync    run --src-video <url> --audio <url> [options]
     python avatar.py lipsync2   run --src-video <url> --audio <url> [options]
     python avatar.py dreamavatar run --image <url|path> --audio <url|path> --prompt "..." [options]
-    python avatar.py dreamact   run --video <url|path> --images <url> [<url>...] [options]
+    python avatar.py dreamact   run --video <url|path> --images <url> [<url>...] [--resolution 720P] [--task-mode pose2v]
 """
 
 import argparse
@@ -172,6 +172,10 @@ def build_dreamact_body(args) -> dict:
     }
     if args.seed is not None:
         body["seed"] = args.seed
+    if args.resolution is not None:
+        body["resolution"] = args.resolution
+    if args.task_mode is not None:
+        body["taskMode"] = args.task_mode
     return body
 
 
@@ -179,7 +183,11 @@ def add_dreamact_args(p):
     p.add_argument("--video", required=True, help="Driving video URL or local path (max 1 min)")
     p.add_argument("--images", nargs="+", required=True,
                    help="Reference image URLs or local paths")
-    p.add_argument("--seed", type=int, default=None, help="Seed for reproducibility")
+    p.add_argument("--seed", type=int, default=None, help="Seed for reproducibility (default: 42)")
+    p.add_argument("--resolution", default=None, choices=["480P", "720P"],
+                   help="Processing resolution (default: 480P)")
+    p.add_argument("--task-mode", default=None, choices=["replace_body", "pose2v"], dest="task_mode",
+                   help="Generation mode: replace_body (swap character, keep background) or pose2v (pose following) (default: replace_body)")
 
 
 # ---------------------------------------------------------------------------
