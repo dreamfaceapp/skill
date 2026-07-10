@@ -4,7 +4,7 @@
 Subcommands:
     seedance       Generate video with text/image/video/audio inputs (Seedance 2.0)
     seedance-mini  Generate video with text/image inputs at lowest cost (Seedance 2.0 Mini)
-    seedream       Generate high-quality images from text prompts (Seedream 4.5)
+    seedream       Generate high-quality images from text prompts (Seedream 4.0/4.5/5.0 Lite/5.0 Pro)
 
 Usage:
     python byte_dance.py seedance run --prompt "..." --resolution <480p|720p|1080p|4k> --duration <4-15> [options]
@@ -140,7 +140,7 @@ def add_seedance_mini_args(p):
 
 
 # ---------------------------------------------------------------------------
-# Seedream 4.5
+# Seedream
 # ---------------------------------------------------------------------------
 
 def build_seedream_body(args) -> dict:
@@ -158,14 +158,15 @@ def build_seedream_body(args) -> dict:
 
 
 def add_seedream_args(p):
-    p.add_argument("--model", default="seedream-4.5",
-                   help="Model version (default: seedream-4.5)")
+    p.add_argument("--model", default="seedream-5.0-pro",
+                   choices=["seedream-5.0-pro", "seedream-5.0-lite", "seedream-4.5", "seedream-4.0"],
+                   help="Model version (default: seedream-5.0-pro)")
     p.add_argument("--prompt", required=True,
-                   help="Text prompt describing the image content to generate")
+                   help="Text prompt describing the image content to generate. Supports Chinese and English.")
     p.add_argument("--images", nargs="+", default=None,
-                   help="Reference image URLs or local paths for style guidance (max images)")
-    p.add_argument("--size", default="2048x2048",
-                   help="Image dimensions (default: 2048x2048, range: 1024x1024 to 4096x4096)")
+                   help="Reference image URLs or local paths for style guidance or img2img (max 10). Supported formats: jpeg, png, webp, bmp, tiff, gif, heic, heif.")
+    p.add_argument("--size", default=None,
+                   help='Image dimensions. Mode 1: exact pixels "WIDTHxHEIGHT" (default: 1024x1024, range: 1280x720 to 4,624,220 total pixels). Mode 2: resolution keyword "1K" or "2K" with aspect ratio described in prompt.')
     p.add_argument("--seed", type=int, default=None,
                    help="Random seed for reproducible results (default: -1 for random)")
 
@@ -191,7 +192,7 @@ TOOLS = {
         "endpoint": SEEDREAM_PATH,
         "add_args": add_seedream_args,
         "build_body": build_seedream_body,
-        "help": "Generate high-quality images from text prompts (Seedream 4.5)",
+        "help": "Generate high-quality images from text prompts (Seedream 4.0/4.5/5.0 Lite/5.0 Pro)",
     },
 }
 
