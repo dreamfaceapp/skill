@@ -76,9 +76,9 @@ Generate videos at the lowest cost using the Seedance 2.0 Mini model, ideal for 
 | seedance-2.0-mini | 480p | 15 |
 | seedance-2.0-mini | 720p | 33 |
 
-## Seedream 4.5
+## Seedream
 
-Generate high-quality images from text prompts using the Seedream model with support for reference images, custom sizes, and seed control.
+Generate high-quality images from text prompts using the Seedream model. Supports multiple model versions for different quality and speed requirements, with both text-to-image and image-to-image generation modes via reference images.
 
 - **Endpoint:** `POST /api/async/seedream`
 - **Command:** `python byte_dance.py seedream run --prompt "..." [options]`
@@ -87,22 +87,26 @@ Generate high-quality images from text prompts using the Seedream model with sup
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `--model` | string | No | Model version (default: seedream-4.5) |
-| `--prompt` | string | Yes | Text prompt describing the image content |
-| `--images` | string | No | Reference image URLs or local paths for style guidance |
-| `--size` | string | No | Image dimensions (default: 2048x2048, range: 1024x1024 to 4096x4096) |
+| `--model` | string | No | Model version (default: seedream-5.0-pro). Options: `seedream-5.0-pro`, `seedream-5.0-lite`, `seedream-4.5`, `seedream-4.0` |
+| `--prompt` | string | Yes | Text prompt describing the image content. Supports Chinese and English |
+| `--images` | string | No | Reference image URLs or local paths for style guidance or img2img (max 10). Supported formats: jpeg, png, webp, bmp, tiff, gif, heic, heif |
+| `--size` | string | No | Image dimensions. Mode 1: exact pixels `"WIDTHxHEIGHT"` (default: 1024x1024, range: 1280x720 to 4,624,220 total pixels). Mode 2: resolution keyword `1K` or `2K` with aspect ratio described in prompt |
 | `--seed` | integer | No | Random seed for reproducible results (default: -1 for random) |
 
 ### Tips
 
-- Use `--model` to specify a different model version if needed.
+- Use `--model` to select the desired model version. `seedream-5.0-pro` offers the highest quality.
+- The `size` parameter supports two modes: exact pixel dimensions (`"WIDTHxHEIGHT"`) or resolution keywords (`"1K"`, `"2K"`).
 - Use `--seed` for reproducible results.
-- Image size must be between 1024x1024 and 4096x4096.
+- The 1K billing threshold (≤ 2,360,000 pixels) and 2K threshold (> 2,360,000 pixels) apply to seedream-5.0-pro.
+- Supported image formats for reference images: jpeg, png, webp, bmp, tiff, gif, heic, heif. Max 30MB per image.
 
 ### Model Pricing
 
 | Model Version | Credits per Image |
 |---------------|------------------|
-| seedream-4.0 | 6 credits |
-| seedream-4.5 | 8 credits |
-| seedream-5.0-lite | 7 credits |
+| seedream-5.0-pro (1K, ≤ 2,360,000 pixels) | 12 |
+| seedream-5.0-pro (2K, > 2,360,000 pixels) | 24 |
+| seedream-5.0-lite | 9 |
+| seedream-4.5 | 10 |
+| seedream-4.0 | 8 |
