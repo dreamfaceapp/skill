@@ -139,20 +139,18 @@ What does the user need?
 ├─ A character performing actions from a driving video?
 │  → avatar.py dreamact
 │
-├─ Generate an image from text or image-to-image?
-│  ├─ Fast / budget-friendly → byte_dance.py seedream --model seedream-5.0-lite
-│  ├─ Premium high-quality → byte_dance.py seedream --model seedream-5.0-pro
-│  └─ Standard quality → byte_dance.py seedream --model seedream-4.5 or seedream-4.0
-│
-├─ Generate an image from text with Google Gemini model?
-│  ├─ Fast & cost-efficient → google_gen.py nano-banana-2
-│  └─ Premium high-fidelity → google_gen.py nano-banana-pro
-│
-├─ Generate an image from text with OpenAI model?
-│  → open_ai.py gpt-image
+├─ Generate an image from text?
+│  ├─ Using Flux → image_gen.py text2image
+│  ├─ Using Seedream → byte_dance.py seedream
+│  │  ├─ Premium → --model seedream-5.0-pro
+│  │  ├─ Budget → --model seedream-5.0-lite
+│  │  └─ Standard → --model seedream-4.5 or seedream-4.0
+│  ├─ Using Google Gemini → google_gen.py nano-banana-2 or nano-banana-pro
+│  └─ Using OpenAI → open_ai.py gpt-image
 │
 ├─ Transform an existing image?
-│  → image_gen.py image2image
+│  ├─ Using Flux → image_gen.py image2image
+│  └─ Using Seedream (image-to-image) → byte_dance.py seedream --model seedream-5.0-pro [+ --image]
 │
 ├─ Edit an image?
 │  ├─ Colorize B&W photo → image_edit.py colorize
@@ -206,7 +204,8 @@ What does the user need?
 | "Make a talking face video with this audio" | `avatar.py lipsync run` |
 | "Generate an avatar from this photo and audio" | `avatar.py dreamavatar run` |
 | "Make this character do the dance in this video" | `avatar.py dreamact run` |
-| "Generate an image of..." | `byte_dance.py seedream run` |
+| "Generate an image of..." | `image_gen.py text2image run` |
+| "Generate a premium image from text" | `byte_dance.py seedream run --model seedream-5.0-pro` |
 | "Modify this image to..." | `image_gen.py image2image run` |
 | "Colorize this old photo" | `image_edit.py colorize run` |
 | "Enhance this blurry image" | `image_edit.py enhance run` |
@@ -219,7 +218,6 @@ What does the user need?
 | "Animate this image into a video" | `video_gen.py image2video run` |
 | "Create a transition between these two images" | `video_gen.py head-tail run` |
 | "Generate video with text, images, video or audio inputs" | `byte_dance.py seedance run` |
-| "Generate high-quality image from text" | `byte_dance.py seedream run --model seedream-5.0-pro` |
 | "Generate image with Google Gemini (fast)" | `google_gen.py nano-banana-2 run` |
 | "Generate premium image with Google Gemini" | `google_gen.py nano-banana-pro run` |
 | "Generate image with OpenAI model" | `open_ai.py gpt-image run` |
