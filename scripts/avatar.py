@@ -13,7 +13,7 @@ Usage:
     python avatar.py lipsync    run --src-video <url> --audio <url> [options]
     python avatar.py lipsync2   run --src-video <url> --audio <url> [options]
     python avatar.py dreamavatar run --image <url|path> --audio <url|path> --prompt "..." [options]
-    python avatar.py dreamact   run --video <url|path> --images <url> [<url>...] [--resolution 720P] [--task-mode pose2v]
+    python avatar.py dreamact   run --video <url|path> --images <url> [<url>...] [--resolution 720P] [--quality-mode high|base] [--task-mode pose2v]
 """
 
 import argparse
@@ -176,6 +176,8 @@ def build_dreamact_body(args) -> dict:
         body["resolution"] = args.resolution
     if args.task_mode is not None:
         body["taskMode"] = args.task_mode
+    if args.quality_mode is not None:
+        body["qualityMode"] = args.quality_mode
     return body
 
 
@@ -188,6 +190,8 @@ def add_dreamact_args(p):
                    help="Processing resolution (default: 480P)")
     p.add_argument("--task-mode", default=None, choices=["replace_body", "pose2v"], dest="task_mode",
                    help="Generation mode: replace_body (swap character, keep background) or pose2v (pose following) (default: replace_body)")
+    p.add_argument("--quality-mode", default=None, choices=["high", "base"], dest="quality_mode",
+                   help="Quality mode: high or base (default: base)")
 
 
 # ---------------------------------------------------------------------------
