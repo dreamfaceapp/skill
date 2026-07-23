@@ -96,6 +96,7 @@ Motion-driven avatar — character from reference images performs motions from a
 | `--seed` | integer | No | Seed for reproducibility (default: 42) |
 | `--resolution` | choice | No | Processing resolution: `480P`, `720P` (default: `480P`) |
 | `--task-mode` | choice | No | Generation mode: `replace_body` (swap character, keep background), `pose2v` (pose following) (default: `replace_body`) |
+| `--quality-mode` | choice | No | Quality mode: `high`, `base` (default: `base`) |
 
 ### Pricing
 
