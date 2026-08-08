@@ -118,7 +118,7 @@ Decision tree:
 | Video Gen | `scripts/video_gen.py` | [video_gen.md](references/video_gen.md) | Text-to-Video, Image-to-Video, Head-Tail-to-Video (Wan2.1) |
 | Video Edit | `scripts/video_edit.py` | [video_edit.md](references/video_edit.md) | Swap Face Video, Video Matting, Composite, Video Enhance |
 | Video Translate | `scripts/video_translate.py` | [video_translate.md](references/video_translate.md) | Video Translate 2.0 (en/zh/es) |
-| ByteDance | `scripts/byte_dance.py` | [byte_dance.md](references/byte_dance.md) | Seedance 2.0, Seedance 2.0 Mini, Seedream (4.0/4.5/5.0 Lite/5.0 Pro) |
+| ByteDance | `scripts/byte_dance.py` | [byte_dance.md](references/byte_dance.md) | Seedance 2.5, Seedance 2.0, Seedance 2.0 Mini, Seedream (4.0/4.5/5.0 Lite/5.0 Pro) |
 | Google | `scripts/google_gen.py` | [google_gen.md](references/google_gen.md) | Nano Banana 2, Nano Banana Pro |
 | OpenAI | `scripts/open_ai.py` | [open_ai.md](references/open_ai.md) | GPT Image 2 |
 | Voice | `scripts/voice.py` | [voice.md](references/voice.md) | Voice Clone, TTS Clone, TTS Common, TTS Pro, Voice List |
@@ -171,7 +171,8 @@ What does the user need?
 │  → video_gen.py head-tail
 │
 ├─ Generate video with multi-modal inputs (text + images + video + audio)?
-│  → byte_dance.py seedance
+│  ├─ Latest model (480p/720p only) → byte_dance.py seedance-2.5
+│  └─ Seedance 2.0 (480p-4k) → byte_dance.py seedance
 │
 ├─ Edit a video?
 │  ├─ Replace face → video_edit.py swap-face
@@ -217,7 +218,7 @@ What does the user need?
 | "Generate a video about..." | `video_gen.py text2video run` |
 | "Animate this image into a video" | `video_gen.py image2video run` |
 | "Create a transition between these two images" | `video_gen.py head-tail run` |
-| "Generate video with text, images, video or audio inputs" | `byte_dance.py seedance run` |
+| "Generate video with text, images, video or audio inputs" | `byte_dance.py seedance-2.5 run` or `byte_dance.py seedance run` |
 | "Generate image with Google Gemini (fast)" | `google_gen.py nano-banana-2 run` |
 | "Generate premium image with Google Gemini" | `google_gen.py nano-banana-pro run` |
 | "Generate image with OpenAI model" | `open_ai.py gpt-image run` |
@@ -270,9 +271,9 @@ See [references/error_handling.md](references/error_handling.md) for error codes
 | Video Editing | Swap Face Video, Video Matting, Composite, Video Enhance | 4 |
 | Video Translate | Video Translate 2.0 | 1 |
 | Voice | Voice Clone, TTS Clone, TTS Common, TTS Pro, Voice List | 5 |
-| ByteDance | Seedance 2.0, Seedance 2.0 Mini, Seedream (4.0/4.5/5.0 Lite/5.0 Pro) | 3 |
+| ByteDance | Seedance 2.5, Seedance 2.0, Seedance 2.0 Mini, Seedream (4.0/4.5/5.0 Lite/5.0 Pro) | 4 |
 | Google | Nano Banana 2, Nano Banana Pro | 2 |
 | OpenAI | GPT Image 2 | 1 |
-| **Total** | | **32** |
+| **Total** | | **33** |
 
 > **Never promise capabilities that don't exist as modules.**
