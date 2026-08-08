@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-"""DreamAPI ByteDance — Seedance 2.0 video generation and Seedream image generation.
+"""DreamAPI ByteDance — Seedance 2.5/2.0 video generation and Seedream image generation.
 
 Subcommands:
+    seedance-2.5  Generate video with text/image/video/audio inputs (Seedance 2.5, 480p/720p only)
     seedance       Generate video with text/image/video/audio inputs (Seedance 2.0)
     seedance-mini  Generate video with text/image inputs at lowest cost (Seedance 2.0 Mini)
     seedream       Generate high-quality images from text prompts (Seedream 4.0/4.5/5.0 Lite/5.0 Pro)
 
 Usage:
+    python byte_dance.py seedance-2.5 run --prompt "..." --resolution <480p|720p> --duration <4-30> [options]
     python byte_dance.py seedance run --prompt "..." --resolution <480p|720p|1080p|4k> --duration <4-15> [options]
     python byte_dance.py seedance-mini run --prompt "..." --resolution <480p|720p> --duration <4-15> [options]
     python byte_dance.py seedream run --prompt "..." [options]
@@ -22,6 +24,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
 from shared.client import DreamAPIClient
 from shared.upload import resolve_local_file
 
+SEEDANCE_2_5_PATH = "/api/async/seedance_2.5"
 SEEDANCE_PATH = "/api/async/seedance_2.0"
 SEEDREAM_PATH = "/api/async/seedream"
 
@@ -45,6 +48,52 @@ def print_result(data, args, client):
         print(json.dumps(data, indent=2, ensure_ascii=False))
     else:
         print(output.get("output_url", ""))
+
+
+# ---------------------------------------------------------------------------
+# Seedance 2.5
+# ---------------------------------------------------------------------------
+
+def build_seedance_2_5_body(args) -> dict:
+    body = {
+        "model": "seedance-2.5",
+        "prompt": args.prompt,
+        "resolution": args.resolution,
+        "duration": args.duration,
+    }
+    if args.images:
+        body["images"] = [resolve_local_file(img, quiet=args.quiet) for img in args.images]
+    if args.videos:
+        body["videos"] = args.videos
+    if args.audios:
+        body["audios"] = args.audios
+    if args.ratio:
+        body["ratio"] = args.ratio
+    if args.seed is not None:
+        body["seed"] = args.seed
+    if args.generate_audio:
+        body["generateAudio"] = True
+    return body
+
+
+def add_seedance_2_5_args(p):
+    p.add_argument("--prompt", required=True, help="Video description (max 1500 chars)")
+    p.add_argument("--resolution", required=True, choices=["480p", "720p"],
+                   help="Output resolution (480p or 720p only)")
+    p.add_argument("--duration", required=True, type=int,
+                   help="Video duration in seconds (4-30)")
+    p.add_argument("--images", nargs="+", default=None,
+                   help="Reference image URLs or local paths (max 9)")
+    p.add_argument("--videos", nargs="+", default=None,
+                   help="Reference video URLs (max 3, total max 15s)")
+    p.add_argument("--audios", nargs="+", default=None,
+                   help="Audio URLs (max 3)")
+    p.add_argument("--ratio", default="adaptive",
+                   help="Aspect ratio (default: adaptive)")
+    p.add_argument("--seed", type=int, default=None,
+                   help="Random seed for reproducible results")
+    p.add_argument("--generate-audio", action="store_true",
+                   help="Generate audio for the video")
 
 
 # ---------------------------------------------------------------------------
@@ -176,6 +225,12 @@ def add_seedream_args(p):
 # ---------------------------------------------------------------------------
 
 TOOLS = {
+    "seedance-2.5": {
+        "endpoint": SEEDANCE_2_5_PATH,
+        "add_args": add_seedance_2_5_args,
+        "build_body": build_seedance_2_5_body,
+        "help": "Generate video with text/image/video/audio inputs (Seedance 2.5, 480p/720p only)",
+    },
     "seedance": {
         "endpoint": SEEDANCE_PATH,
         "add_args": add_seedance_args,
@@ -199,7 +254,7 @@ TOOLS = {
 
 def main():
     parser = argparse.ArgumentParser(
-        description="DreamAPI ByteDance — Seedance 2.0 video generation, Seedance 2.0 Mini, and Seedream image generation.",
+        description="DreamAPI ByteDance — Seedance 2.5/2.0 video generation, Seedance 2.0 Mini, and Seedream image generation.",
     )
 
     tool_sub = parser.add_subparsers(dest="tool")
