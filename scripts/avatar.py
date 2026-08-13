@@ -104,7 +104,7 @@ def add_lipsync_args(p):
     p.add_argument("--audio", required=True, help="Driving audio URL or local path")
     p.add_argument("--video-width", type=int, default=0, help="Output width (0=original)")
     p.add_argument("--video-height", type=int, default=0, help="Output height (0=original)")
-    p.add_argument("--video-enhance", type=bool, default=False, help="Enable enhancement")
+    p.add_argument("--video-enhance", action="store_true", help="Enable enhancement")
 
 
 # ---------------------------------------------------------------------------

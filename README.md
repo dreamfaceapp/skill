@@ -1,6 +1,6 @@
 # DreamAPI Skill
 
-An AI agent skill that gives you access to 33 AI-powered tools for video generation, talking avatars, image editing, voice cloning, and more — all by simply describing what you want in natural language.
+An AI agent skill that gives you access to 34 AI-powered tools for video generation, talking avatars, image editing, voice cloning, and more — all by simply describing what you want in natural language.
 
 This skill follows the [Agent Skills specification](https://agentskills.io/specification) and works with any compatible AI coding assistant (Cursor, Claude Code, etc.).
 
@@ -32,7 +32,7 @@ The real power is chaining capabilities. Describe a goal and the AI orchestrates
 
 **Portrait restoration** — colorize a B&W photo, enhance resolution, then animate it into a short video clip.
 
-## Available Tools (33)
+## Available Tools (34)
 
 | Category | Tools | Script |
 |----------|-------|--------|
@@ -55,7 +55,7 @@ npx skills add dreamapi/DreamAPI
 
 ## Configuration
 
-Requires Python 3.8+ and a DreamAPI account.
+Requires Python 3.10+ and a DreamAPI account.
 
 ### Get your API Key
 

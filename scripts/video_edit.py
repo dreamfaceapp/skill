@@ -93,15 +93,15 @@ def build_matting_body(args) -> dict:
     body = {"srcFileUrl": resolve_local_file(args.src_file, quiet=args.quiet)}
     if args.bit_rate:
         body["bitRate"] = args.bit_rate
-    if args.remove_color_spill is not None:
-        body["removeColorSpill"] = args.remove_color_spill
+    if args.remove_color_spill:
+        body["removeColorSpill"] = True
     return body
 
 
 def add_matting_args(p):
     p.add_argument("--src-file", required=True, help="Source video URL (MP4 only)")
     p.add_argument("--bit-rate", default=None, help="Target bitrate (e.g. '16m')")
-    p.add_argument("--remove-color-spill", type=bool, default=None,
+    p.add_argument("--remove-color-spill", action="store_true",
                    help="Remove color fringes around subject")
 
 

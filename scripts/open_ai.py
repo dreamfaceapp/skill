@@ -57,7 +57,7 @@ def build_gpt_image_body(args) -> dict:
     if args.n:
         body["n"] = args.n
     if args.images:
-        body["images"] = args.images
+        body["images"] = [resolve_local_file(img, quiet=args.quiet) for img in args.images]
     return body
 
 
@@ -73,7 +73,7 @@ def add_gpt_image_args(p):
     p.add_argument("--n", type=int, default=1,
                    help="Number of images to generate (1-10, default: 1)")
     p.add_argument("--images", nargs="+", default=None,
-                   help="Publicly accessible reference image URLs for image-to-image editing (max 4)")
+                   help="Reference image URLs or local paths for image-to-image editing (max 4)")
 
 
 # ---------------------------------------------------------------------------

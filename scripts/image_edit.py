@@ -150,8 +150,8 @@ def build_tryon_body(args) -> dict:
         body["overallClothes"] = resolve_local_file(args.overall, quiet=args.quiet)
     if args.prompt is not None:
         body["prompt"] = args.prompt
-    if args.enable_shoes is not None:
-        body["enableShoes"] = args.enable_shoes
+    if args.enable_shoes:
+        body["enableShoes"] = True
     if args.width is not None:
         body["width"] = args.width
     if args.height is not None:
@@ -165,7 +165,7 @@ def add_tryon_args(p):
     p.add_argument("--lower", default=None, help="Lower garment image URL or local path (pants, skirt, shorts)")
     p.add_argument("--overall", default=None, help="One-piece garment image URL or local path (dress, jumpsuit)")
     p.add_argument("--prompt", default=None, help="Text prompt to guide generation")
-    p.add_argument("--enable-shoes", type=bool, default=None, help="Enable shoe generation (default: true)")
+    p.add_argument("--enable-shoes", action="store_true", help="Enable shoe generation")
     p.add_argument("--width", type=int, default=None, help="Output width in pixels (default: 768)")
     p.add_argument("--height", type=int, default=None, help="Output height in pixels (default: 1378)")
 

@@ -124,8 +124,6 @@ class DreamAPIClient:
                 reason = task_info.get("reason", "Unknown")
                 raise DreamAPIError(-1, f"Task failed: {reason}")
 
-        return {}
-
     def run_task(
         self,
         endpoint_path: str,
