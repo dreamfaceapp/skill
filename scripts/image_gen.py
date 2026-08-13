@@ -24,7 +24,7 @@ from shared.upload import resolve_local_file
 
 TEXT2IMAGE_PATH = "/api/async/flux_text2image"
 IMAGE2IMAGE_PATH = "/api/async/flux_image2image"
-DREAMIMAGE_PATH = "/api/async/gemma4_image_edit"
+DREAMIMAGE_PATH = "/api/async/dreamimage_2.0"
 
 DEFAULT_TIMEOUT = 600
 DEFAULT_INTERVAL = 5
