@@ -1,8 +1,8 @@
 ---
 name: dreamapi-skill
-description: "34 AI-powered tools for video generation, talking avatars, image editing, voice cloning, Google Gemini image generation, virtual try-on, OpenAI GPT image, and more — powered by DreamAPI. Describe what you want and the agent handles the rest."
+description: "35 AI-powered tools for video generation, talking avatars, image editing, voice cloning, Google Gemini image generation, virtual try-on, OpenAI GPT image, DreamImage, and more — powered by DreamAPI. Describe what you want and the agent handles the rest."
 metadata:
-  tags: dreamapi, avatar, lipsync, video, image, voice, tts, flux, wan2.1, ai, api, text2image, image2video, face-swap, remove-bg, video-translate, voice-clone, google-gemini, image-gen, try-on, openai, gpt-image, seedream
+  tags: dreamapi, avatar, lipsync, video, image, voice, tts, flux, wan2.1, ai, api, text2image, image2video, face-swap, remove-bg, video-translate, voice-clone, google-gemini, image-gen, try-on, openai, gpt-image, seedream, dreamimage
   requires:
     bins: [python3]
   primaryEnv: DREAMAPI_API_KEY
@@ -10,7 +10,7 @@ metadata:
 
 # DreamAPI Skill
 
-> 34 AI tools powered by [DreamAPI](https://api.newportai.com/) — from Newport AI.
+> 35 AI tools powered by [DreamAPI](https://api.newportai.com/) — from Newport AI.
 
 ## Execution Rule
 
@@ -34,6 +34,7 @@ metadata:
 |-----------|---------------|
 | Avatar (LipSync / DreamAvatar / Dreamact) | ~2–5 min |
 | Image Generation (Flux / Seedream) | ~30s–1 min |
+| DreamImage 2.0 | ~30s–1 min |
 | Google Gemini Image | ~30s–1 min |
 | OpenAI GPT Image 2 | ~30s–1 min |
 | Image Editing (Colorize / Enhance / etc.) | ~30s–1 min |
@@ -116,7 +117,7 @@ Decision tree:
 |--------|--------|-----------|-------------|
 | Auth | `scripts/auth.py` | [auth.md](references/auth.md) | API key management — login, status, logout |
 | Avatar | `scripts/avatar.py` | [avatar.md](references/avatar.md) | LipSync, LipSync 2.0, DreamAvatar 3.0 Fast, Dreamact |
-| Image Gen | `scripts/image_gen.py` | [image_gen.md](references/image_gen.md) | Flux Text-to-Image, Flux Image-to-Image |
+| Image Gen | `scripts/image_gen.py` | [image_gen.md](references/image_gen.md) | Flux Text-to-Image, Flux Image-to-Image, DreamImage 2.0 |
 | Image Edit | `scripts/image_edit.py` | [image_edit.md](references/image_edit.md) | Colorize, Enhance, Outpainting, Inpainting, Swap Face, Remove BG, Virtual Try-On |
 | Video Gen | `scripts/video_gen.py` | [video_gen.md](references/video_gen.md) | Text-to-Video, Image-to-Video, Head-Tail-to-Video (Wan2.1) |
 | Video Edit | `scripts/video_edit.py` | [video_edit.md](references/video_edit.md) | Swap Face Video, Video Matting, Composite, Watermark Remover, Video Enhance |
@@ -153,6 +154,7 @@ What does the user need?
 │
 ├─ Transform an existing image?
 │  ├─ Using Flux → image_gen.py image2image
+│  ├─ Using DreamImage 2.0 (natural language edit) → image_gen.py dreamimage
 │  └─ Using Seedream (image-to-image) → byte_dance.py seedream --model seedream-5.0-pro [+ --image]
 │
 ├─ Edit an image?
@@ -212,6 +214,7 @@ What does the user need?
 | "Generate an image of..." | `image_gen.py text2image run` |
 | "Generate a premium image from text" | `byte_dance.py seedream run --model seedream-5.0-pro` |
 | "Modify this image to..." | `image_gen.py image2image run` |
+| "Edit this image with a prompt" | `image_gen.py dreamimage run` |
 | "Colorize this old photo" | `image_edit.py colorize run` |
 | "Enhance this blurry image" | `image_edit.py enhance run` |
 | "Extend this image" | `image_edit.py outpainting run` |
@@ -270,7 +273,7 @@ See [references/error_handling.md](references/error_handling.md) for error codes
 | Category | Tools | Count |
 |----------|-------|-------|
 | Avatar | LipSync, LipSync 2.0, DreamAvatar 3.0 Fast, Dreamact | 4 |
-| Image Generation | Flux Text-to-Image, Flux Image-to-Image | 2 |
+| Image Generation | Flux Text-to-Image, Flux Image-to-Image, DreamImage 2.0 | 3 |
 | Image Editing | Colorize, Enhance, Outpainting, Inpainting, Swap Face, Remove BG, Virtual Try-On | 7 |
 | Video Generation | Text-to-Video, Image-to-Video, Head-Tail-to-Video | 3 |
 | Video Editing | Swap Face Video, Video Matting, Composite, Watermark Remover, Video Enhance | 5 |
@@ -279,6 +282,6 @@ See [references/error_handling.md](references/error_handling.md) for error codes
 | ByteDance | Seedance 2.5, Seedance 2.0, Seedance 2.0 Mini, Seedream (4.0/4.5/5.0 Lite/5.0 Pro) | 4 |
 | Google | Nano Banana 2, Nano Banana Pro | 2 |
 | OpenAI | GPT Image 2 | 1 |
-| **Total** | | **34** |
+| **Total** | | **35** |
 
 > **Never promise capabilities that don't exist as modules.**
