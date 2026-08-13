@@ -57,7 +57,7 @@ Returns one or more image URLs. Multiple images printed one per line.
 
 Edit an existing image using a natural language prompt. The model applies the requested changes while preserving the original structure and content.
 
-- **Endpoint:** `POST /api/async/gemma4_image_edit`
+- **Endpoint:** `POST /api/async/dreamimage_2.0`
 - **Command:** `python image_gen.py dreamimage run --image <url|path> --prompt "..."`
 - **Cost:** 10 credits per request
 
