@@ -1,6 +1,6 @@
 ---
 name: dreamapi-skill
-description: "32 AI-powered tools for video generation, talking avatars, image editing, voice cloning, Google Gemini image generation, virtual try-on, OpenAI GPT image, and more — powered by DreamAPI. Describe what you want and the agent handles the rest."
+description: "34 AI-powered tools for video generation, talking avatars, image editing, voice cloning, Google Gemini image generation, virtual try-on, OpenAI GPT image, and more — powered by DreamAPI. Describe what you want and the agent handles the rest."
 metadata:
   tags: dreamapi, avatar, lipsync, video, image, voice, tts, flux, wan2.1, ai, api, text2image, image2video, face-swap, remove-bg, video-translate, voice-clone, google-gemini, image-gen, try-on, openai, gpt-image, seedream
   requires:
@@ -10,7 +10,7 @@ metadata:
 
 # DreamAPI Skill
 
-> 32 AI tools powered by [DreamAPI](https://api.newportai.com/) — from Newport AI.
+> 34 AI tools powered by [DreamAPI](https://api.newportai.com/) — from Newport AI.
 
 ## Execution Rule
 
@@ -39,7 +39,10 @@ metadata:
 | Image Editing (Colorize / Enhance / etc.) | ~30s–1 min |
 | Virtual Try-On | ~30s–1 min |
 | Video Generation (Wan2.1) | ~3–5 min |
+| Video Generation (Seedance 2.0 / 2.5) | ~3–10 min |
 | Video Editing (Swap Face / Matting) | ~2–5 min |
+| Video Watermark Removal | ~1–3 min |
+| Video Enhance | ~2–5 min |
 | Video Translate | ~3–5 min |
 | Voice Clone | ~30s–1 min |
 | TTS (Common / Pro / Clone) | ~10–30s |
@@ -73,7 +76,7 @@ Once you have your key, just tell me and I'll set it up for you.
 
 ## Prerequisites
 
-- **Python 3.8+**
+- **Python 3.10+**
 - Authenticated — see [references/auth.md](references/auth.md)
 - Credits available — see [references/user.md](references/user.md)
 
@@ -116,7 +119,7 @@ Decision tree:
 | Image Gen | `scripts/image_gen.py` | [image_gen.md](references/image_gen.md) | Flux Text-to-Image, Flux Image-to-Image |
 | Image Edit | `scripts/image_edit.py` | [image_edit.md](references/image_edit.md) | Colorize, Enhance, Outpainting, Inpainting, Swap Face, Remove BG, Virtual Try-On |
 | Video Gen | `scripts/video_gen.py` | [video_gen.md](references/video_gen.md) | Text-to-Video, Image-to-Video, Head-Tail-to-Video (Wan2.1) |
-| Video Edit | `scripts/video_edit.py` | [video_edit.md](references/video_edit.md) | Swap Face Video, Video Matting, Composite, Video Enhance |
+| Video Edit | `scripts/video_edit.py` | [video_edit.md](references/video_edit.md) | Swap Face Video, Video Matting, Composite, Watermark Remover, Video Enhance |
 | Video Translate | `scripts/video_translate.py` | [video_translate.md](references/video_translate.md) | Video Translate 2.0 (en/zh/es) |
 | ByteDance | `scripts/byte_dance.py` | [byte_dance.md](references/byte_dance.md) | Seedance 2.5, Seedance 2.0, Seedance 2.0 Mini, Seedream (4.0/4.5/5.0 Lite/5.0 Pro) |
 | Google | `scripts/google_gen.py` | [google_gen.md](references/google_gen.md) | Nano Banana 2, Nano Banana Pro |
@@ -178,6 +181,7 @@ What does the user need?
 │  ├─ Replace face → video_edit.py swap-face
 │  ├─ Remove background → video_edit.py matting
 │  ├─ Replace background → video_edit.py matting + composite
+│  ├─ Remove watermark → video_edit.py watermark-remover
 │  └─ Enhance quality → video_edit.py video-enhance
 │
 ├─ Translate video speech?
@@ -225,6 +229,7 @@ What does the user need?
 | "Swap the face in this video" | `video_edit.py swap-face run` |
 | "Remove the video background" | `video_edit.py matting run` |
 | "Replace the video background with..." | `video_edit.py matting run` + `composite run` |
+| "Remove the watermark from this video" | `video_edit.py watermark-remover run` |
 | "Enhance this video quality" | `video_edit.py video-enhance run` |
 | "Translate this video to Chinese" | `video_translate.py run` |
 | "Clone this voice" | `voice.py clone run` |
@@ -268,12 +273,12 @@ See [references/error_handling.md](references/error_handling.md) for error codes
 | Image Generation | Flux Text-to-Image, Flux Image-to-Image | 2 |
 | Image Editing | Colorize, Enhance, Outpainting, Inpainting, Swap Face, Remove BG, Virtual Try-On | 7 |
 | Video Generation | Text-to-Video, Image-to-Video, Head-Tail-to-Video | 3 |
-| Video Editing | Swap Face Video, Video Matting, Composite, Video Enhance | 4 |
+| Video Editing | Swap Face Video, Video Matting, Composite, Watermark Remover, Video Enhance | 5 |
 | Video Translate | Video Translate 2.0 | 1 |
 | Voice | Voice Clone, TTS Clone, TTS Common, TTS Pro, Voice List | 5 |
 | ByteDance | Seedance 2.5, Seedance 2.0, Seedance 2.0 Mini, Seedream (4.0/4.5/5.0 Lite/5.0 Pro) | 4 |
 | Google | Nano Banana 2, Nano Banana Pro | 2 |
 | OpenAI | GPT Image 2 | 1 |
-| **Total** | | **33** |
+| **Total** | | **34** |
 
 > **Never promise capabilities that don't exist as modules.**

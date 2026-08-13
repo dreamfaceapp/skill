@@ -29,7 +29,7 @@ def build_body(args) -> dict:
         "videoUrl": resolve_local_file(args.video, quiet=args.quiet),
         "sourceLanguage": args.source,
         "targetLanguage": args.target,
-        "enableLipSync": args.lip_sync,
+        "enableLipSync": not args.no_lip_sync,
     }
 
 
@@ -56,8 +56,8 @@ def main():
                        help="Source language")
     p_run.add_argument("--target", required=True, choices=["en", "zh", "es"],
                        help="Target language")
-    p_run.add_argument("--lip-sync", type=bool, default=True,
-                       help="Enable lip-sync (default: true)")
+    p_run.add_argument("--no-lip-sync", action="store_true",
+                       help="Disable lip-sync (lip-sync is enabled by default)")
     p_run.add_argument("--timeout", type=float, default=DEFAULT_TIMEOUT)
     p_run.add_argument("--interval", type=float, default=DEFAULT_INTERVAL)
     p_run.add_argument("--json", action="store_true")
@@ -68,7 +68,7 @@ def main():
     p_submit.add_argument("--video", required=True)
     p_submit.add_argument("--source", required=True, choices=["en", "zh", "es"])
     p_submit.add_argument("--target", required=True, choices=["en", "zh", "es"])
-    p_submit.add_argument("--lip-sync", type=bool, default=True)
+    p_submit.add_argument("--no-lip-sync", action="store_true")
     p_submit.add_argument("--json", action="store_true")
     p_submit.add_argument("-q", "--quiet", action="store_true")
 
