@@ -1,6 +1,6 @@
 # Image Editing
 
-Seven tools for image manipulation and enhancement.
+Six tools for image manipulation and enhancement.
 
 Script: `scripts/image_edit.py`
 
@@ -53,23 +53,6 @@ Extend an image beyond its original borders with AI-generated content.
   "outPaintSize": { "left": 0, "right": 0, "top": 0, "bottom": 0 }
 }
 ```
-
----
-
-## Inpainting
-
-Fill or replace masked regions of an image using AI.
-
-- **Endpoint:** `POST /api/async/inpainting`
-- **Command:** `python image_edit.py inpainting run --url <url> --mask <url> --prompt "..."`
-
-### Parameters
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `--url` | string | Yes | Original image URL or local path |
-| `--mask` | string | Yes | Mask image URL (white areas = fill) |
-| `--prompt` | string | Yes | What to generate in the masked area |
 
 ---
 
