@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-"""DreamAPI Image Editing — Colorize, Enhance, Outpainting, Inpainting, Swap Face, Remove BG, Virtual Try-On.
+"""DreamAPI Image Editing — Colorize, Enhance, Outpainting, Swap Face, Remove BG, Virtual Try-On.
 
 Subcommands:
     colorize    Add color to B&W photos (requires human face)
     enhance     AI super-resolution / quality boost
     outpainting Extend image beyond its borders
-    inpainting  Fill masked regions with AI-generated content
     swap-face   Replace face in target image
     remove-bg   Remove background from image
     try-on      Virtual Try-On — transfer clothing onto a model image
@@ -14,7 +13,6 @@ Usage:
     python image_edit.py colorize   run --url <image_url>
     python image_edit.py enhance    run --image <url|path>
     python image_edit.py outpainting run --url <url> --left 100 --right 100
-    python image_edit.py inpainting run --url <url> --mask <url> --prompt "..."
     python image_edit.py swap-face  run --url <url> --face <url>
     python image_edit.py remove-bg  run --url <url|path>
     python image_edit.py try-on     run --model <url|path> --upper <url|path> --lower <url|path> [options]
@@ -33,7 +31,6 @@ from shared.upload import resolve_local_file
 COLORIZE_PATH = "/api/async/colorize"
 ENHANCE_PATH = "/api/async/enhance"
 OUTPAINTING_PATH = "/api/async/outpainting"
-INPAINTING_PATH = "/api/async/inpainting"
 SWAP_FACE_PATH = "/api/async/swap_face"
 REMOVE_BG_PATH = "/api/async/remove_background"
 TRYON_PATH = "/api/async/tryon_clothes"
@@ -98,20 +95,6 @@ def add_outpainting_args(p):
     p.add_argument("--right", type=int, default=0, help="Pixels to expand right")
     p.add_argument("--top", type=int, default=0, help="Pixels to expand top")
     p.add_argument("--bottom", type=int, default=0, help="Pixels to expand bottom")
-
-
-def build_inpainting_body(args) -> dict:
-    return {
-        "url": resolve_local_file(args.url, quiet=args.quiet),
-        "mask": resolve_local_file(args.mask, quiet=args.quiet),
-        "prompt": args.prompt,
-    }
-
-
-def add_inpainting_args(p):
-    p.add_argument("--url", required=True, help="Original image URL or local path")
-    p.add_argument("--mask", required=True, help="Mask image URL (white=fill area)")
-    p.add_argument("--prompt", required=True, help="What to generate in masked area")
 
 
 def build_swap_face_body(args) -> dict:
@@ -193,12 +176,6 @@ TOOLS = {
         "build_body": build_outpainting_body,
         "help": "Extend image beyond its borders",
     },
-    "inpainting": {
-        "endpoint": INPAINTING_PATH,
-        "add_args": add_inpainting_args,
-        "build_body": build_inpainting_body,
-        "help": "Fill masked regions with AI content",
-    },
     "swap-face": {
         "endpoint": SWAP_FACE_PATH,
         "add_args": add_swap_face_args,
@@ -222,7 +199,7 @@ TOOLS = {
 
 def main():
     parser = argparse.ArgumentParser(
-        description="DreamAPI Image Editing — colorize, enhance, outpainting, inpainting, swap face, remove bg, virtual try-on.",
+        description="DreamAPI Image Editing — colorize, enhance, outpainting, swap face, remove bg, virtual try-on.",
     )
 
     tool_sub = parser.add_subparsers(dest="tool")
