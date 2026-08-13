@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
-"""DreamAPI Image Generation — Flux Text-to-Image, Flux Image-to-Image.
+"""DreamAPI Image Generation — Flux Text-to-Image, Flux Image-to-Image, DreamImage 2.0.
 
 Subcommands:
     text2image   Generate images from text prompts
     image2image  Transform an image with text guidance
+    dreamimage   Edit an image with a natural language prompt (DreamImage 2.0)
 
 Usage:
     python image_gen.py text2image run --prompt "..." [--width 1024] [--height 1024] [--num 1]
     python image_gen.py image2image run --image <url|path> --prompt "..." [options]
+    python image_gen.py dreamimage run --image <url|path> --prompt "..."
 """
 
 import argparse
@@ -22,6 +24,7 @@ from shared.upload import resolve_local_file
 
 TEXT2IMAGE_PATH = "/api/async/flux_text2image"
 IMAGE2IMAGE_PATH = "/api/async/flux_image2image"
+DREAMIMAGE_PATH = "/api/async/gemma4_image_edit"
 
 DEFAULT_TIMEOUT = 600
 DEFAULT_INTERVAL = 5
@@ -100,6 +103,24 @@ def add_image2image_args(p):
 
 
 # ---------------------------------------------------------------------------
+# DreamImage 2.0
+# ---------------------------------------------------------------------------
+
+def build_dreamimage_body(args) -> dict:
+    return {
+        "image": resolve_local_file(args.image, quiet=args.quiet),
+        "prompt": args.prompt,
+    }
+
+
+def add_dreamimage_args(p):
+    p.add_argument("--image", required=True,
+                   help="Input image URL or local path (JPG, JPEG, PNG, WEBP)")
+    p.add_argument("--prompt", required=True,
+                   help="Natural language description of the desired edit")
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -116,12 +137,18 @@ TOOLS = {
         "build_body": build_image2image_body,
         "help": "Transform an image with text guidance (Flux)",
     },
+    "dreamimage": {
+        "endpoint": DREAMIMAGE_PATH,
+        "add_args": add_dreamimage_args,
+        "build_body": build_dreamimage_body,
+        "help": "Edit an image with a natural language prompt (DreamImage 2.0)",
+    },
 }
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="DreamAPI Image Generation — text-to-image and image-to-image.",
+        description="DreamAPI Image Generation — Flux text-to-image, Flux image-to-image, DreamImage 2.0.",
     )
 
     tool_sub = parser.add_subparsers(dest="tool")

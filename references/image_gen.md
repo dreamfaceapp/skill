@@ -1,6 +1,6 @@
 # Image Generation
 
-Two tools for generating images using the Flux model.
+Three tools for generating and transforming images: Flux Text-to-Image, Flux Image-to-Image, and DreamImage 2.0.
 
 Script: `scripts/image_gen.py`
 
@@ -50,3 +50,32 @@ Transform an existing image based on a text prompt.
 ### Output
 
 Returns one or more image URLs. Multiple images printed one per line.
+
+---
+
+## DreamImage 2.0
+
+Edit an existing image using a natural language prompt. The model applies the requested changes while preserving the original structure and content.
+
+- **Endpoint:** `POST /api/async/gemma4_image_edit`
+- **Command:** `python image_gen.py dreamimage run --image <url|path> --prompt "..."`
+- **Cost:** 10 credits per request
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `--image` | string | Yes | Input image URL or local path. Supported formats: JPG, JPEG, PNG, WEBP |
+| `--prompt` | string | Yes | Natural language description of the desired edit |
+
+### Tips
+
+- The input image must be publicly accessible (local files are auto-uploaded).
+- Describe the edit clearly, e.g. "Replace the background with a beach sunset scene".
+- Typical generation time is about 30s–1 min.
+
+### Billing
+
+| Billing Mode | Credit Cost |
+|--------------|-------------|
+| Fixed per request | 10 credits |

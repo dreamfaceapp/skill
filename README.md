@@ -1,6 +1,6 @@
 # DreamAPI Skill
 
-An AI agent skill that gives you access to 34 AI-powered tools for video generation, talking avatars, image editing, voice cloning, and more — all by simply describing what you want in natural language.
+An AI agent skill that gives you access to 35 AI-powered tools for video generation, talking avatars, image editing, voice cloning, and more — all by simply describing what you want in natural language.
 
 This skill follows the [Agent Skills specification](https://agentskills.io/specification) and works with any compatible AI coding assistant (Cursor, Claude Code, etc.).
 
@@ -32,12 +32,12 @@ The real power is chaining capabilities. Describe a goal and the AI orchestrates
 
 **Portrait restoration** — colorize a B&W photo, enhance resolution, then animate it into a short video clip.
 
-## Available Tools (34)
+## Available Tools (35)
 
 | Category | Tools | Script |
 |----------|-------|--------|
 | Avatar (4) | LipSync, LipSync 2.0, DreamAvatar 3.0 Fast, Dreamact | `scripts/avatar.py` |
-| Image Generation (2) | Flux Text-to-Image, Flux Image-to-Image | `scripts/image_gen.py` |
+| Image Generation (3) | Flux Text-to-Image, Flux Image-to-Image, DreamImage 2.0 | `scripts/image_gen.py` |
 | Image Editing (7) | Colorize, Enhance, Outpainting, Inpainting, Swap Face, Remove BG, Virtual Try-On | `scripts/image_edit.py` |
 | Video Generation (3) | Text-to-Video, Image-to-Video, Head-Tail-to-Video | `scripts/video_gen.py` |
 | Video Editing (5) | Swap Face Video, Video Matting, Composite, Watermark Remover, Video Enhance | `scripts/video_edit.py` |
