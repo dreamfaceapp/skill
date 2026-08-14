@@ -19,6 +19,8 @@ Generate videos using the Seedance 2.5 model with support for text prompts, refe
 | `--resolution` | string | Yes | Output resolution: "480p" or "720p" only |
 | `--duration` | integer | Yes | Video duration in seconds (4-30) |
 | `--images` | string | No | Reference image URLs or local paths (max 9) |
+| `--image-url` | string | No | First-frame image URL or local path (JPEG/PNG/WebP). Enables image-to-video mode |
+| `--end-image-url` | string | No | Last-frame image URL or local path. Only valid with `--image-url` |
 | `--videos` | string | No | Reference video URLs (max 3, total max 15s) |
 | `--audios` | string | No | Audio URLs (max 3) |
 | `--ratio` | string | No | Aspect ratio (default: adaptive) |
@@ -29,6 +31,7 @@ Generate videos using the Seedance 2.5 model with support for text prompts, refe
 
 - Seedance 2.5 supports only 480p and 720p resolutions. It does not support 1080p or 4k.
 - Video duration range is 4-30 seconds.
+- Provide `--image-url` to generate from a first frame (image-to-video). Add `--end-image-url` for first-last frame transition. `--end-image-url` without `--image-url` returns error 10192.
 - The model does not support reference images or videos containing real human faces.
 - Audio is only effective when images or videos are provided.
 - Use `--seed` for reproducible results.
@@ -55,6 +58,8 @@ Generate videos using the Seedance 2.0 model with support for text prompts, refe
 | `--resolution` | string | Yes | Output resolution: "480p", "720p", "1080p", or "4k" |
 | `--duration` | integer | Yes | Video duration in seconds (4-15) |
 | `--images` | string | No | Reference image URLs or local paths (max 9) |
+| `--image-url` | string | No | First-frame image URL or local path (JPEG/PNG/WebP). Enables image-to-video mode |
+| `--end-image-url` | string | No | Last-frame image URL or local path. Only valid with `--image-url` |
 | `--videos` | string | No | Reference video URLs (max 3, total max 15s) |
 | `--audios` | string | No | Audio URLs (max 3) |
 | `--ratio` | string | No | Aspect ratio (default: adaptive) |
@@ -63,6 +68,7 @@ Generate videos using the Seedance 2.0 model with support for text prompts, refe
 
 ### Tips
 
+- Provide `--image-url` to generate from a first frame (image-to-video). Add `--end-image-url` for first-last frame transition. `--end-image-url` without `--image-url` returns error 10192.
 - The model does not support reference images or videos containing real human faces.
 - Audio is only effective when images or videos are provided.
 - Use `--seed` for reproducible results.
@@ -93,6 +99,8 @@ Generate videos at the lowest cost using the Seedance 2.0 Mini model, ideal for 
 | `--resolution` | string | Yes | Output resolution: "480p" or "720p" only |
 | `--duration` | integer | Yes | Video duration in seconds (4-15) |
 | `--images` | string | No | Reference image URLs or local paths (max 9) |
+| `--image-url` | string | No | First-frame image URL or local path (JPEG/PNG/WebP). Enables image-to-video mode |
+| `--end-image-url` | string | No | Last-frame image URL or local path. Only valid with `--image-url` |
 | `--videos` | string | No | Reference video URLs (max 3, total max 15s) |
 | `--audios` | string | No | Audio URLs (max 3) |
 | `--ratio` | string | No | Aspect ratio (default: adaptive) |

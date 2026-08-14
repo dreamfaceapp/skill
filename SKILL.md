@@ -169,10 +169,12 @@ What does the user need?
 │  → video_gen.py text2video
 │
 ├─ Animate an image into video?
-│  → video_gen.py image2video
+│  ├─ Wan2.1 → video_gen.py image2video
+│  └─ Seedance first frame → byte_dance.py seedance / seedance-2.5 --image-url
 │
 ├─ Create transition between two frames?
-│  → video_gen.py head-tail
+│  ├─ Wan2.1 → video_gen.py head-tail
+│  └─ Seedance first-last frame → byte_dance.py seedance / seedance-2.5 --image-url --end-image-url
 │
 ├─ Generate video with multi-modal inputs (text + images + video + audio)?
 │  ├─ Latest model (480p/720p only) → byte_dance.py seedance-2.5
@@ -221,8 +223,8 @@ What does the user need?
 | "Remove the background" | `image_edit.py remove-bg run` |
 | "Try on clothes virtually" | `image_edit.py try-on run` |
 | "Generate a video about..." | `video_gen.py text2video run` |
-| "Animate this image into a video" | `video_gen.py image2video run` |
-| "Create a transition between these two images" | `video_gen.py head-tail run` |
+| "Animate this image into a video" | `video_gen.py image2video run` or `byte_dance.py seedance run --image-url` |
+| "Create a transition between these two images" | `video_gen.py head-tail run` or `byte_dance.py seedance run --image-url --end-image-url` |
 | "Generate video with text, images, video or audio inputs" | `byte_dance.py seedance-2.5 run` or `byte_dance.py seedance run` |
 | "Generate image with Google Gemini (fast)" | `google_gen.py nano-banana-2 run` |
 | "Generate premium image with Google Gemini" | `google_gen.py nano-banana-pro run` |
