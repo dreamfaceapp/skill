@@ -8,9 +8,9 @@ Subcommands:
     seedream       Generate high-quality images from text prompts (Seedream 4.0/4.5/5.0 Lite/5.0 Pro)
 
 Usage:
-    python byte_dance.py seedance-2.5 run --prompt "..." --resolution <480p|720p> --duration <4-30> [options]
-    python byte_dance.py seedance run --prompt "..." --resolution <480p|720p|1080p|4k> --duration <4-15> [options]
-    python byte_dance.py seedance-mini run --prompt "..." --resolution <480p|720p> --duration <4-15> [options]
+    python byte_dance.py seedance-2.5 run --prompt "..." --resolution <480p|720p> --duration <4-30> [--image-url <url>] [--end-image-url <url>] [options]
+    python byte_dance.py seedance run --prompt "..." --resolution <480p|720p|1080p|4k> --duration <4-15> [--image-url <url>] [--end-image-url <url>] [options]
+    python byte_dance.py seedance-mini run --prompt "..." --resolution <480p|720p> --duration <4-15> [--image-url <url>] [--end-image-url <url>] [options]
     python byte_dance.py seedream run --prompt "..." [options]
 """
 
@@ -40,6 +40,21 @@ def add_poll_args(p):
 def add_output_args(p):
     p.add_argument("--json", action="store_true", help="Output full JSON")
     p.add_argument("-q", "--quiet", action="store_true")
+
+
+def add_seedance_frame_args(p):
+    p.add_argument("--image-url", default=None, dest="image_url",
+                   help="First-frame image URL or local path (JPEG/PNG/WebP). Enables image-to-video mode.")
+    p.add_argument("--end-image-url", default=None, dest="end_image_url",
+                   help="Last-frame image URL or local path. Only valid with --image-url (JPEG/PNG/WebP).")
+
+
+def apply_seedance_frame_body(body: dict, args) -> dict:
+    if args.image_url is not None:
+        body["imageUrl"] = resolve_local_file(args.image_url, quiet=args.quiet)
+    if args.end_image_url is not None:
+        body["endImageUrl"] = resolve_local_file(args.end_image_url, quiet=args.quiet)
+    return body
 
 
 def print_result(data, args, client):
@@ -73,7 +88,7 @@ def build_seedance_2_5_body(args) -> dict:
         body["seed"] = args.seed
     if args.generate_audio:
         body["generateAudio"] = True
-    return body
+    return apply_seedance_frame_body(body, args)
 
 
 def add_seedance_2_5_args(p):
@@ -84,6 +99,7 @@ def add_seedance_2_5_args(p):
                    help="Video duration in seconds (4-30)")
     p.add_argument("--images", nargs="+", default=None,
                    help="Reference image URLs or local paths (max 9)")
+    add_seedance_frame_args(p)
     p.add_argument("--videos", nargs="+", default=None,
                    help="Reference video URLs (max 3, total max 15s)")
     p.add_argument("--audios", nargs="+", default=None,
@@ -119,7 +135,7 @@ def build_seedance_body(args) -> dict:
         body["seed"] = args.seed
     if args.generate_audio:
         body["generateAudio"] = True
-    return body
+    return apply_seedance_frame_body(body, args)
 
 
 def add_seedance_args(p):
@@ -130,6 +146,7 @@ def add_seedance_args(p):
                    help="Video duration in seconds (4-15)")
     p.add_argument("--images", nargs="+", default=None,
                    help="Reference image URLs or local paths (max 9)")
+    add_seedance_frame_args(p)
     p.add_argument("--videos", nargs="+", default=None,
                    help="Reference video URLs (max 3, total max 15s)")
     p.add_argument("--audios", nargs="+", default=None,
@@ -165,7 +182,7 @@ def build_seedance_mini_body(args) -> dict:
         body["seed"] = args.seed
     if args.generate_audio:
         body["generateAudio"] = True
-    return body
+    return apply_seedance_frame_body(body, args)
 
 
 def add_seedance_mini_args(p):
@@ -176,6 +193,7 @@ def add_seedance_mini_args(p):
                    help="Video duration in seconds (4-15)")
     p.add_argument("--images", nargs="+", default=None,
                    help="Reference image URLs or local paths (max 9)")
+    add_seedance_frame_args(p)
     p.add_argument("--videos", nargs="+", default=None,
                    help="Reference video URLs (max 3, total max 15s)")
     p.add_argument("--audios", nargs="+", default=None,
