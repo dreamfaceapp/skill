@@ -21,7 +21,7 @@ Generate videos using the Seedance 2.5 model with support for text prompts, refe
 | `--images` | string | No | Reference image URLs or local paths (max 9) |
 | `--image-url` | string | No | First-frame image URL or local path (JPEG/PNG/WebP). Enables image-to-video mode |
 | `--end-image-url` | string | No | Last-frame image URL or local path. Only valid with `--image-url` |
-| `--videos` | string | No | Reference video URLs (max 3, total max 15s) |
+| `--videos` | string | No | Reference video URLs (max 10, each 2-30s, total max 30s) |
 | `--audios` | string | No | Audio URLs (max 3) |
 | `--ratio` | string | No | Aspect ratio (default: adaptive) |
 | `--seed` | integer | No | Random seed for reproducible results |
@@ -38,10 +38,16 @@ Generate videos using the Seedance 2.5 model with support for text prompts, refe
 
 ### Model Pricing
 
-| Model Version | Resolution | Credits / Second |
-|---------------|------------|------------------|
-| seedance-2.5 | 480p | 80 |
-| seedance-2.5 | 720p | 180 |
+| Model Version | Resolution | Output Video Credits / Second | Reference Video Credits / Second |
+|---------------|------------|-------------------------------|----------------------------------|
+| seedance-2.5 | 480p | 45 | 23 |
+| seedance-2.5 | 720p | 100 | 34 |
+
+Reference To Video billing formula:
+
+`Credits = Output Video Credits × Duration (seconds) + Reference Video Credits × Total Reference Video Duration (seconds)`
+
+The reference video duration is the sum of the durations of all reference videos in `--videos` (up to 10 videos, each 2-30 seconds, total max 30 seconds). Text/Image To Video are billed by output duration only.
 
 ## Seedance 2.0
 
@@ -75,14 +81,20 @@ Generate videos using the Seedance 2.0 model with support for text prompts, refe
 
 ### Model Pricing
 
-| Model Version | Resolution | Credits / Second |
-|---------------|------------|------------------|
-| seedance-2.0 | 480p | 30 |
-| seedance-2.0 | 720p | 70 |
-| seedance-2.0 | 1080p | 156 |
-| seedance-2.0 | 4k | 369 |
-| seedance-2.0-fast | 480p | 24 |
-| seedance-2.0-fast | 720p | 53 |
+| Model Version | Resolution | Output Video Credits / Second | Reference Video Credits / Second |
+|---------------|------------|-------------------------------|----------------------------------|
+| seedance-2.0 | 480p | 30 | 10 |
+| seedance-2.0 | 720p | 67 | 23 |
+| seedance-2.0 | 1080p | 165 | 55 |
+| seedance-2.0 | 4k | 340 | 114 |
+| seedance-2.0-fast | 480p | 25 | 9 |
+| seedance-2.0-fast | 720p | 53 | 18 |
+
+Reference To Video billing formula:
+
+`Credits = Output Video Credits × Duration (seconds) + Reference Video Credits × Total Reference Video Duration (seconds)`
+
+The reference video duration is the sum of the durations of all reference videos in `--videos` (max 3 videos, total max 15 seconds). Text/Image To Video are billed by output duration only.
 
 ## Seedance 2.0 Mini
 
