@@ -1,8 +1,8 @@
 ---
 name: dreamapi-skill
-description: "34 AI-powered tools for video generation, talking avatars, image editing, voice cloning, Google Gemini image generation, virtual try-on, OpenAI GPT image, DreamImage, and more — powered by DreamAPI. Describe what you want and the agent handles the rest."
+description: "36 AI-powered tools for video generation, talking avatars, image editing, voice cloning, Google Gemini image generation, virtual try-on, OpenAI GPT image, DreamImage, and more — powered by DreamAPI. Describe what you want and the agent handles the rest."
 metadata:
-  tags: dreamapi, avatar, lipsync, video, image, voice, tts, flux, wan2.1, ai, api, text2image, image2video, face-swap, remove-bg, video-translate, voice-clone, google-gemini, image-gen, try-on, openai, gpt-image, seedream, dreamimage
+  tags: dreamapi, avatar, lipsync, video, image, voice, tts, flux, wan2.1, ai, api, text2image, image2video, face-swap, remove-bg, video-translate, voice-clone, google-gemini, image-gen, try-on, openai, gpt-image, seedream, dreamimage, dreamvideo
   requires:
     bins: [python3]
   primaryEnv: DREAMAPI_API_KEY
@@ -10,7 +10,7 @@ metadata:
 
 # DreamAPI Skill
 
-> 34 AI tools powered by [DreamAPI](https://api.newportai.com/) — from Newport AI.
+> 36 AI tools powered by [DreamAPI](https://api.newportai.com/) — from Newport AI.
 
 ## Execution Rule
 
@@ -40,6 +40,7 @@ metadata:
 | Image Editing (Colorize / Enhance / etc.) | ~30s–1 min |
 | Virtual Try-On | ~30s–1 min |
 | Video Generation (Wan2.1) | ~3–5 min |
+| Video Generation (DreamVideo 3.0) | ~3–10 min |
 | Video Generation (Seedance 2.0 / 2.5) | ~3–10 min |
 | Video Editing (Swap Face / Matting) | ~2–5 min |
 | Video Watermark Removal | ~1–3 min |
@@ -119,7 +120,7 @@ Decision tree:
 | Avatar | `scripts/avatar.py` | [avatar.md](references/avatar.md) | LipSync, LipSync 2.0, DreamAvatar 3.0 Fast, Dreamact |
 | Image Gen | `scripts/image_gen.py` | [image_gen.md](references/image_gen.md) | Flux Text-to-Image, Flux Image-to-Image, DreamImage 2.0 |
 | Image Edit | `scripts/image_edit.py` | [image_edit.md](references/image_edit.md) | Colorize, Enhance, Outpainting, Swap Face, Remove BG, Virtual Try-On |
-| Video Gen | `scripts/video_gen.py` | [video_gen.md](references/video_gen.md) | Text-to-Video, Image-to-Video, Head-Tail-to-Video (Wan2.1) |
+| Video Gen | `scripts/video_gen.py` | [video_gen.md](references/video_gen.md) | Wan2.1 Text/Image/Head-Tail, DreamVideo 3.0 Text/Image |
 | Video Edit | `scripts/video_edit.py` | [video_edit.md](references/video_edit.md) | Swap Face Video, Video Matting, Composite, Watermark Remover, Video Enhance |
 | Video Translate | `scripts/video_translate.py` | [video_translate.md](references/video_translate.md) | Video Translate 2.0 (en/zh/es) |
 | ByteDance | `scripts/byte_dance.py` | [byte_dance.md](references/byte_dance.md) | Seedance 2.5, Seedance 2.0, Seedance 2.0 Mini, Seedream (4.0/4.5/5.0 Lite/5.0 Pro) |
@@ -166,13 +167,16 @@ What does the user need?
 │  └─ Try on clothes virtually → image_edit.py try-on
 │
 ├─ Generate a video from text?
-│  → video_gen.py text2video
+│  ├─ DreamVideo 3.0 (3–15s, 480P/720P) → video_gen.py dreamvideo-text2video
+│  └─ Wan2.1 → video_gen.py text2video
 │
 ├─ Animate an image into video?
+│  ├─ DreamVideo 3.0 (1 image = i2v) → video_gen.py dreamvideo-image2video --images
 │  ├─ Wan2.1 → video_gen.py image2video
 │  └─ Seedance first frame → byte_dance.py seedance / seedance-2.5 --image-url
 │
 ├─ Create transition between two frames?
+│  ├─ DreamVideo 3.0 (2 images, first-last) → video_gen.py dreamvideo-image2video --images <first> <last>
 │  ├─ Wan2.1 → video_gen.py head-tail
 │  └─ Seedance first-last frame → byte_dance.py seedance / seedance-2.5 --image-url --end-image-url
 │
@@ -222,9 +226,9 @@ What does the user need?
 | "Swap the face in this photo" | `image_edit.py swap-face run` |
 | "Remove the background" | `image_edit.py remove-bg run` |
 | "Try on clothes virtually" | `image_edit.py try-on run` |
-| "Generate a video about..." | `video_gen.py text2video run` |
-| "Animate this image into a video" | `video_gen.py image2video run` or `byte_dance.py seedance run --image-url` |
-| "Create a transition between these two images" | `video_gen.py head-tail run` or `byte_dance.py seedance run --image-url --end-image-url` |
+| "Generate a video about..." | `video_gen.py dreamvideo-text2video run` or `video_gen.py text2video run` |
+| "Animate this image into a video" | `video_gen.py dreamvideo-image2video run --images` or `video_gen.py image2video run` or `byte_dance.py seedance run --image-url` |
+| "Create a transition between these two images" | `video_gen.py dreamvideo-image2video run --images <first> <last>` or `video_gen.py head-tail run` or `byte_dance.py seedance run --image-url --end-image-url` |
 | "Generate video with text, images, video or audio inputs" | `byte_dance.py seedance-2.5 run` or `byte_dance.py seedance run` |
 | "Generate image with Google Gemini (fast)" | `google_gen.py nano-banana-2 run` |
 | "Generate premium image with Google Gemini" | `google_gen.py nano-banana-pro run` |
@@ -275,13 +279,13 @@ See [references/error_handling.md](references/error_handling.md) for error codes
 | Avatar | LipSync, LipSync 2.0, DreamAvatar 3.0 Fast, Dreamact | 4 |
 | Image Generation | Flux Text-to-Image, Flux Image-to-Image, DreamImage 2.0 | 3 |
 | Image Editing | Colorize, Enhance, Outpainting, Swap Face, Remove BG, Virtual Try-On | 6 |
-| Video Generation | Text-to-Video, Image-to-Video, Head-Tail-to-Video | 3 |
+| Video Generation | Wan2.1 Text/Image/Head-Tail, DreamVideo 3.0 Text/Image | 5 |
 | Video Editing | Swap Face Video, Video Matting, Composite, Watermark Remover, Video Enhance | 5 |
 | Video Translate | Video Translate 2.0 | 1 |
 | Voice | Voice Clone, TTS Clone, TTS Common, TTS Pro, Voice List | 5 |
 | ByteDance | Seedance 2.5, Seedance 2.0, Seedance 2.0 Mini, Seedream (4.0/4.5/5.0 Lite/5.0 Pro) | 4 |
 | Google | Nano Banana 2, Nano Banana Pro | 2 |
 | OpenAI | GPT Image 2 | 1 |
-| **Total** | | **34** |
+| **Total** | | **36** |
 
 > **Never promise capabilities that don't exist as modules.**
