@@ -1,6 +1,6 @@
 # DreamAPI Skill
 
-An AI agent skill that gives you access to 34 AI-powered tools for video generation, talking avatars, image editing, voice cloning, and more — all by simply describing what you want in natural language.
+An AI agent skill that gives you access to 36 AI-powered tools for video generation, talking avatars, image editing, voice cloning, and more — all by simply describing what you want in natural language.
 
 This skill follows the [Agent Skills specification](https://agentskills.io/specification) and works with any compatible AI coding assistant (Cursor, Claude Code, etc.).
 
@@ -11,7 +11,7 @@ Install the skill, then just tell the AI what you need:
 | You say... | You get... |
 |------------|------------|
 | "Generate a professional portrait photo" | An AI-generated image via Flux |
-| "Animate this image into a short video" | A video clip via Wan2.1 |
+| "Animate this image into a short video" | A video clip via DreamVideo 3.0 or Wan2.1 |
 | "Make a talking avatar from this photo and script" | A lip-synced avatar video |
 | "Remove the background from this product photo" | A clean cutout PNG |
 | "Swap the face in this video" | A face-swapped video |
@@ -32,14 +32,14 @@ The real power is chaining capabilities. Describe a goal and the AI orchestrates
 
 **Portrait restoration** — colorize a B&W photo, enhance resolution, then animate it into a short video clip.
 
-## Available Tools (34)
+## Available Tools (36)
 
 | Category | Tools | Script |
 |----------|-------|--------|
 | Avatar (4) | LipSync, LipSync 2.0, DreamAvatar 3.0 Fast, Dreamact | `scripts/avatar.py` |
 | Image Generation (3) | Flux Text-to-Image, Flux Image-to-Image, DreamImage 2.0 | `scripts/image_gen.py` |
 | Image Editing (6) | Colorize, Enhance, Outpainting, Swap Face, Remove BG, Virtual Try-On | `scripts/image_edit.py` |
-| Video Generation (3) | Text-to-Video, Image-to-Video, Head-Tail-to-Video | `scripts/video_gen.py` |
+| Video Generation (5) | Wan2.1 Text/Image/Head-Tail, DreamVideo 3.0 Text/Image | `scripts/video_gen.py` |
 | Video Editing (5) | Swap Face Video, Video Matting, Composite, Watermark Remover, Video Enhance | `scripts/video_edit.py` |
 | Video Translate (1) | Video Translate 2.0 | `scripts/video_translate.py` |
 | ByteDance (4) | Seedance 2.5, Seedance 2.0, Seedance 2.0 Mini, Seedream (4.0/4.5/5.0 Lite/5.0 Pro) | `scripts/byte_dance.py` |
