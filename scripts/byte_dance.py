@@ -215,8 +215,8 @@ def build_seedream_body(args) -> dict:
         "model": args.model,
         "prompt": args.prompt,
     }
-    if args.images:
-        body["images"] = [resolve_local_file(img, quiet=args.quiet) for img in args.images]
+    if args.image:
+        body["image"] = [resolve_local_file(img, quiet=args.quiet) for img in args.image]
     if args.size:
         body["size"] = args.size
     if args.seed is not None:
@@ -230,8 +230,8 @@ def add_seedream_args(p):
                    help="Model version (default: seedream-5.0-pro)")
     p.add_argument("--prompt", required=True,
                    help="Text prompt describing the image content to generate. Supports Chinese and English.")
-    p.add_argument("--images", nargs="+", default=None,
-                   help="Reference image URLs or local paths for style guidance or img2img (max 10). Supported formats: jpeg, png, webp, bmp, tiff, gif, heic, heif.")
+    p.add_argument("--image", nargs="+", default=None,
+                   help="Reference image URLs or local paths for img2img (max 10). API field: image (array). Formats: jpeg, png, webp, bmp, tiff, gif, heic, heif.")
     p.add_argument("--size", default=None,
                    help='Image dimensions. Mode 1: exact pixels "WIDTHxHEIGHT" (default: 1024x1024, range: 1280x720 to 4,624,220 total pixels). Mode 2: resolution keyword "1K" or "2K" with aspect ratio described in prompt.')
     p.add_argument("--seed", type=int, default=None,
