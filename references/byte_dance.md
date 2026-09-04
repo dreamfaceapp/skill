@@ -137,7 +137,7 @@ Generate videos at the lowest cost using the Seedance 2.0 Mini model, ideal for 
 Generate high-quality images from text prompts using the Seedream model. Supports multiple model versions for different quality and speed requirements, with both text-to-image and image-to-image generation modes via reference images.
 
 - **Endpoint:** `POST /api/async/seedream`
-- **Command:** `python byte_dance.py seedream run --prompt "..." [options]`
+- **Command:** `python byte_dance.py seedream run --prompt "..." [--image <url>] [options]`
 
 ### Parameters
 
@@ -145,14 +145,14 @@ Generate high-quality images from text prompts using the Seedream model. Support
 |-----------|------|----------|-------------|
 | `--model` | string | No | Model version (default: seedream-5.0-pro). Options: `seedream-5.0-pro`, `seedream-5.0-lite`, `seedream-4.5`, `seedream-4.0` |
 | `--prompt` | string | Yes | Text prompt describing the image content. Supports Chinese and English |
-| `--images` | string[] | No | Reference image URLs or local paths for img2img (max 10). CLI flag stays `--images`; request body field is `image` (array). Formats: jpeg, png, webp, bmp, tiff, gif, heic, heif |
+| `--image` | string[] | No | Reference image URLs or local paths for img2img (max 10). Request body field is `image` (array). Formats: jpeg, png, webp, bmp, tiff, gif, heic, heif |
 | `--size` | string | No | Image dimensions. Mode 1: exact pixels `"WIDTHxHEIGHT"` (default: 1024x1024, range: 1280x720 to 4,624,220 total pixels). Mode 2: resolution keyword `1K` or `2K` with aspect ratio described in prompt |
 | `--seed` | integer | No | Random seed for reproducible results (default: -1 for random) |
 
 ### Tips
 
 - Use `--model` to select the desired model version. `seedream-5.0-pro` offers the highest quality.
-- `--images` is the CLI flag; the Seedream API body uses `image` (array), not `images`. Seedance video reference images still use `images`.
+- Seedream img2img uses `--image` and sends JSON field `image`. Seedance video reference images use `--images` and send JSON field `images`. Do not mix them.
 - The `size` parameter supports two modes: exact pixel dimensions (`"WIDTHxHEIGHT"`) or resolution keywords (`"1K"`, `"2K"`).
 - Use `--seed` for reproducible results.
 - The 1K billing threshold (≤ 2,360,000 pixels) and 2K threshold (> 2,360,000 pixels) apply to seedream-5.0-pro.
