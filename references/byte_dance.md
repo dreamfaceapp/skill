@@ -146,16 +146,17 @@ Generate high-quality images from text prompts using the Seedream model. Support
 | `--model` | string | No | Model version (default: seedream-5.0-pro). Options: `seedream-5.0-pro`, `seedream-5.0-lite`, `seedream-4.5`, `seedream-4.0` |
 | `--prompt` | string | Yes | Text prompt describing the image content. Supports Chinese and English |
 | `--image` | string[] | No | Reference image URLs or local paths for img2img (max 10). Request body field is `image` (array). Formats: jpeg, png, webp, bmp, tiff, gif, heic, heif |
-| `--size` | string | No | Image dimensions. Mode 1: exact pixels `"WIDTHxHEIGHT"` (default: 1024x1024, range: 1280x720 to 4,624,220 total pixels). Mode 2: resolution keyword `1K` or `2K` with aspect ratio described in prompt |
+| `--size` | string | No | Output size. Custom `"WIDTHxHEIGHT"` is **total pixels** (width×height), not a per-edge minimum. **4.5 / 5.0 Lite:** floor **2560×1440 = 3,686,400** (so `1920x1080` / `1024x1024` / `1K` fail; `2048x2048` is OK). Lite tiers: `2K`/`3K`/`4K`. 4.5 tiers: `2K`/`4K`. **5.0 Pro / 4.0:** floor **1280×720 = 921,600**. Pro tiers: `1K`/`1.5K`/`2K`. 4.0 tiers: `1K`/`2K`/`4K`. |
 | `--seed` | integer | No | Random seed for reproducible results (default: -1 for random) |
 
 ### Tips
 
 - Use `--model` to select the desired model version. `seedream-5.0-pro` offers the highest quality.
 - Seedream img2img uses `--image` and sends JSON field `image`. Seedance video reference images use `--images` and send JSON field `images`. Do not mix them.
-- The `size` parameter supports two modes: exact pixel dimensions (`"WIDTHxHEIGHT"`) or resolution keywords (`"1K"`, `"2K"`).
+- **Size floors differ by model.** 4.5 and 5.0 Lite do not accept 1K or any custom size below 3,686,400 total pixels. Do not copy Pro/4.0 sizes (`1280x720`, `1024x1024`, `1344x768`) onto Lite/4.5.
+- Custom `WIDTHxHEIGHT` is checked as width×height. `2048x2048` (4.19M) meets the Lite/4.5 floor; `2560x1440` is the documented 16:9 minimum example.
+- The 1K billing threshold (≤ 2,360,000 pixels) and 2K threshold (> 2,360,000 pixels) apply to seedream-5.0-pro only.
 - Use `--seed` for reproducible results.
-- The 1K billing threshold (≤ 2,360,000 pixels) and 2K threshold (> 2,360,000 pixels) apply to seedream-5.0-pro.
 - Supported image formats for reference images: jpeg, png, webp, bmp, tiff, gif, heic, heif. Max 30MB per image.
 
 ### Model Pricing

@@ -210,6 +210,75 @@ def add_seedance_mini_args(p):
 # Seedream
 # ---------------------------------------------------------------------------
 
+# Total-pixel floors are width*height, not each edge. 2048x2048 is valid for
+# Lite/4.5; 1920x1080 is not. Tiers and ranges follow Ark 图片生成 API.
+SEEDREAM_SIZE_LIMITS = {
+    "seedream-5.0-pro": {
+        "min_pixels": 921600,
+        "max_pixels": 4624220,
+        "tiers": frozenset({"1K", "1.5K", "2K"}),
+    },
+    "seedream-5.0-lite": {
+        "min_pixels": 3686400,
+        "max_pixels": 16777216,
+        "tiers": frozenset({"2K", "3K", "4K"}),
+    },
+    "seedream-4.5": {
+        "min_pixels": 3686400,
+        "max_pixels": 16777216,
+        "tiers": frozenset({"2K", "4K"}),
+    },
+    "seedream-4.0": {
+        "min_pixels": 921600,
+        "max_pixels": 16777216,
+        "tiers": frozenset({"1K", "2K", "4K"}),
+    },
+}
+
+SEEDREAM_SIZE_HELP = (
+    'Image size. Custom WIDTHxHEIGHT is total pixels (not each edge). '
+    'seedream-5.0-lite / seedream-4.5: min 2560x1440 (3,686,400 px), no 1K; '
+    'tiers 2K/3K/4K (Lite) or 2K/4K (4.5). '
+    'seedream-5.0-pro / seedream-4.0: min 1280x720 (921,600 px). '
+    'Do not use 1024x1024 or 1920x1080 on Lite/4.5.'
+)
+
+
+def seedream_size_error(model: str, size: str) -> str | None:
+    """Return an error message if size is illegal for this Seedream model."""
+    limits = SEEDREAM_SIZE_LIMITS.get(model)
+    if limits is None:
+        return f"Unknown Seedream model: {model}"
+
+    normalized = size.strip().upper().replace(" ", "")
+    if normalized in limits["tiers"]:
+        return None
+
+    parts = normalized.lower().replace("*", "x").split("x")
+    if len(parts) != 2:
+        allowed = ", ".join(sorted(limits["tiers"]))
+        return (
+            f"Invalid --size {size!r} for {model}. "
+            f"Use WIDTHxHEIGHT or one of: {allowed}."
+        )
+
+    try:
+        width = int(parts[0])
+        height = int(parts[1])
+    except ValueError:
+        return f"Invalid --size {size!r}: width and height must be integers."
+
+    total = width * height
+    min_pixels = limits["min_pixels"]
+    max_pixels = limits["max_pixels"]
+    if total < min_pixels or total > max_pixels:
+        return (
+            f"--size {size} is {total} pixels, outside {model} range "
+            f"[{min_pixels}, {max_pixels}]."
+        )
+    return None
+
+
 def build_seedream_body(args) -> dict:
     body = {
         "model": args.model,
@@ -218,6 +287,10 @@ def build_seedream_body(args) -> dict:
     if args.image:
         body["image"] = [resolve_local_file(img, quiet=args.quiet) for img in args.image]
     if args.size:
+        size_err = seedream_size_error(args.model, args.size)
+        if size_err is not None:
+            print(size_err, file=sys.stderr)
+            sys.exit(1)
         body["size"] = args.size
     if args.seed is not None:
         body["seed"] = args.seed
@@ -232,8 +305,7 @@ def add_seedream_args(p):
                    help="Text prompt describing the image content to generate. Supports Chinese and English.")
     p.add_argument("--image", nargs="+", default=None,
                    help="Reference image URLs or local paths for img2img (max 10). API field: image (array). Formats: jpeg, png, webp, bmp, tiff, gif, heic, heif.")
-    p.add_argument("--size", default=None,
-                   help='Image dimensions. Mode 1: exact pixels "WIDTHxHEIGHT" (default: 1024x1024, range: 1280x720 to 4,624,220 total pixels). Mode 2: resolution keyword "1K" or "2K" with aspect ratio described in prompt.')
+    p.add_argument("--size", default=None, help=SEEDREAM_SIZE_HELP)
     p.add_argument("--seed", type=int, default=None,
                    help="Random seed for reproducible results (default: -1 for random)")
 
