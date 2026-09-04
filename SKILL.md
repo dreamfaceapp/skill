@@ -217,7 +217,7 @@ What does the user need?
 | "Generate an avatar from this photo and audio" | `avatar.py dreamavatar run` |
 | "Make this character do the dance in this video" | `avatar.py dreamact run` |
 | "Generate an image of..." | `image_gen.py text2image run` |
-| "Generate a premium image from text" | `byte_dance.py seedream run --model seedream-5.0-pro` |
+| "Generate a premium image from text" | `byte_dance.py seedream run --model seedream-5.0-pro` (`--size` `1K`/`1.5K`/`2K` only) |
 | "Modify this image to..." | `image_gen.py image2image run` |
 | "Edit this image with a prompt" | `image_gen.py dreamimage run` |
 | "Colorize this old photo" | `image_edit.py colorize run` |

@@ -146,7 +146,7 @@ Generate high-quality images from text prompts using the Seedream model. Support
 | `--model` | string | No | Model version (default: seedream-5.0-pro). Options: `seedream-5.0-pro`, `seedream-5.0-lite`, `seedream-4.5`, `seedream-4.0` |
 | `--prompt` | string | Yes | Text prompt describing the image content. Supports Chinese and English |
 | `--image` | string[] | No | Reference image URLs or local paths for img2img (max 10). Request body field is `image` (array). Formats: jpeg, png, webp, bmp, tiff, gif, heic, heif |
-| `--size` | string | No | Output size. Custom `"WIDTHxHEIGHT"` is **total pixels** (width×height), not a per-edge minimum. **4.5 / 5.0 Lite:** floor **2560×1440 = 3,686,400** (so `1920x1080` / `1024x1024` / `1K` fail; `2048x2048` is OK). Lite tiers: `2K`/`3K`/`4K`. 4.5 tiers: `2K`/`4K`. **5.0 Pro / 4.0:** floor **1280×720 = 921,600**. Pro tiers: `1K`/`1.5K`/`2K`. 4.0 tiers: `1K`/`2K`/`4K`. |
+| `--size` | string | No | Output size. Custom `"WIDTHxHEIGHT"` must satisfy **both** total pixels (width×height) **and** aspect ratio **[1/16, 16]** (not a per-edge minimum). **5.0 Pro:** pixels **921,600–4,624,220**; keywords `1K` / `1.5K` / `2K` only (no `3K`/`4K`). **4.5 / 5.0 Lite:** pixels **3,686,400–16,777,216** (`1920x1080` / `1024x1024` / `1K` fail; `2048x2048` is OK). Lite tiers: `2K`/`3K`/`4K`. 4.5 tiers: `2K`/`4K`. **4.0:** pixels **921,600–16,777,216**; tiers `1K`/`2K`/`4K`. Keywords skip aspect checks (ratio is described in the prompt). |
 | `--seed` | integer | No | Random seed for reproducible results (default: -1 for random) |
 
 ### Tips
@@ -154,8 +154,9 @@ Generate high-quality images from text prompts using the Seedream model. Support
 - Use `--model` to select the desired model version. `seedream-5.0-pro` offers the highest quality.
 - Seedream img2img uses `--image` and sends JSON field `image`. Seedance video reference images use `--images` and send JSON field `images`. Do not mix them.
 - **Size floors differ by model.** 4.5 and 5.0 Lite do not accept 1K or any custom size below 3,686,400 total pixels. Do not copy Pro/4.0 sizes (`1280x720`, `1024x1024`, `1344x768`) onto Lite/4.5.
-- Custom `WIDTHxHEIGHT` is checked as width×height. `2048x2048` (4.19M) meets the Lite/4.5 floor; `2560x1440` is the documented 16:9 minimum example.
-- The 1K billing threshold (≤ 2,360,000 pixels) and 2K threshold (> 2,360,000 pixels) apply to seedream-5.0-pro only.
+- Custom `WIDTHxHEIGHT` is checked as width×height **and** aspect ratio `[1/16, 16]`. Example: `4097x256` (~16.004:1) fails even if total pixels are in range. `2048x2048` (1:1) and `2560x1440` (16:9) pass when the model's pixel floor is also met. Resolution keywords do not run this aspect check.
+- **seedream-5.0-pro keywords are `1K` / `1.5K` / `2K` only.** Do not send `3K` or `4K` on Pro. Pro custom sizes cannot exceed 4,624,220 total pixels.
+- Pro billing is by total pixels, not by keyword name: ≤ 2,360,000 (typical `1K` / `1.5K`) costs 12 credits; > 2,360,000 (`2K`) costs 24 credits. Other Seedream models have a flat per-image price.
 - Use `--seed` for reproducible results.
 - Supported image formats for reference images: jpeg, png, webp, bmp, tiff, gif, heic, heif. Max 30MB per image.
 
@@ -163,7 +164,7 @@ Generate high-quality images from text prompts using the Seedream model. Support
 
 | Model Version | Credits per Image |
 |---------------|------------------|
-| seedream-5.0-pro (1K, ≤ 2,360,000 pixels) | 12 |
+| seedream-5.0-pro (1K / 1.5K, ≤ 2,360,000 pixels) | 12 |
 | seedream-5.0-pro (2K, > 2,360,000 pixels) | 24 |
 | seedream-5.0-lite | 9 |
 | seedream-4.5 | 10 |
