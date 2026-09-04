@@ -236,7 +236,8 @@ SEEDREAM_SIZE_LIMITS = {
 }
 
 SEEDREAM_SIZE_HELP = (
-    'Image size. Custom WIDTHxHEIGHT is total pixels (not each edge). '
+    'Image size. Custom WIDTHxHEIGHT must satisfy total pixels AND aspect '
+    'ratio [1/16, 16] at the same time (not each-edge minimum). '
     'seedream-5.0-pro: min 1280x720 (921,600 px), max 4,624,220 px; '
     'tiers 1K/1.5K/2K only (no 3K/4K). Typical 1K/1.5K bill at 12 credits. '
     'seedream-4.0: min 1280x720 (921,600 px); tiers 1K/2K/4K. '
@@ -244,6 +245,23 @@ SEEDREAM_SIZE_HELP = (
     'tiers 2K/3K/4K (Lite) or 2K/4K (4.5). '
     'Do not use 1024x1024 or 1920x1080 on Lite/4.5.'
 )
+
+
+def seedream_aspect_error(width: int, height: int, size: str) -> str | None:
+    """Custom WxH must be in [1/16, 16]. Keywords skip this check."""
+    if width <= 0 or height <= 0:
+        return f"--size {size}: width and height must be positive."
+    if width * 16 < height:
+        return (
+            f"--size {size} aspect {width}:{height} is below 1:16. "
+            "Custom size must satisfy aspect ratio [1/16, 16] and the pixel range."
+        )
+    if height * 16 < width:
+        return (
+            f"--size {size} aspect {width}:{height} is above 16:1. "
+            "Custom size must satisfy aspect ratio [1/16, 16] and the pixel range."
+        )
+    return None
 
 
 def seedream_size_error(model: str, size: str) -> str | None:
@@ -278,7 +296,7 @@ def seedream_size_error(model: str, size: str) -> str | None:
             f"--size {size} is {total} pixels, outside {model} range "
             f"[{min_pixels}, {max_pixels}]."
         )
-    return None
+    return seedream_aspect_error(width, height, size)
 
 
 def build_seedream_body(args) -> dict:
