@@ -15,19 +15,26 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
 
 from shared.client import DreamAPIClient
 
-CREDITS_ENDPOINT = "/api/user/available_credits"
+CREDITS_ENDPOINT = "/api/remaining_credits"
+
+
+def _available_credits(data):
+    if isinstance(data, (int, float)):
+        return data
+    if isinstance(data, dict) and "available_credits" in data:
+        return data["available_credits"]
+    return data
 
 
 def cmd_credit(args):
     """Show available credits."""
     client = DreamAPIClient()
-    data = client.get(CREDITS_ENDPOINT)
+    data = client.post_form(CREDITS_ENDPOINT)
 
     if args.json:
         print(json.dumps(data, indent=2, ensure_ascii=False))
     else:
-        credits = data if isinstance(data, (int, float)) else data.get("credits", data)
-        print(f"Available credits: {credits}")
+        print(f"Available credits: {_available_credits(data)}")
 
 
 def main():

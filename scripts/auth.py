@@ -26,7 +26,7 @@ import requests
 
 CRED_FILE = Path.home() / ".dreamapi" / "credentials.json"
 DASHBOARD_URL = "https://api.newportai.com/"
-CREDITS_ENDPOINT = "/api/user/available_credits"
+CREDITS_ENDPOINT = "/api/remaining_credits"
 
 
 # ---------------------------------------------------------------------------
@@ -73,12 +73,13 @@ def _mask_key(key: str) -> str:
 def _verify_api_key(api_key: str) -> dict | None:
     """Verify API key by calling the credits endpoint. Returns data or None."""
     try:
-        resp = requests.get(
+        resp = requests.post(
             f"{DASHBOARD_URL.rstrip('/')}{CREDITS_ENDPOINT}",
             headers={
-                "Content-Type": "application/json",
+                "Content-Type": "application/x-www-form-urlencoded",
                 "Authorization": f"Bearer {api_key}",
             },
+            data={},
             timeout=10,
         )
         if resp.status_code == 200:
@@ -118,7 +119,7 @@ def cmd_login(args) -> None:
 
     if result is not None:
         print(" OK")
-        credits_info = result.get("credits", result)
+        credits_info = result.get("available_credits", result)
         _save_credentials(api_key, extra={"verified": True})
 
         print()
@@ -155,7 +156,7 @@ def cmd_status(args) -> None:
         result = _verify_api_key(env_key)
         if result is not None:
             print("  Status: Valid")
-            credits_info = result.get("credits", result)
+            credits_info = result.get("available_credits", result)
             if isinstance(credits_info, (int, float)):
                 print(f"  Credits: {credits_info}")
         else:
@@ -182,7 +183,7 @@ def cmd_status(args) -> None:
     result = _verify_api_key(api_key)
     if result is not None:
         print("  Status: Valid")
-        credits_info = result.get("credits", result)
+        credits_info = result.get("available_credits", result)
         if isinstance(credits_info, (int, float)):
             print(f"  Credits: {credits_info}")
     else:
