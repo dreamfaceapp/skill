@@ -181,7 +181,7 @@ What does the user need?
 │  └─ Seedance first-last frame → byte_dance.py seedance / seedance-2.5 --image-url --end-image-url
 │
 ├─ Generate video with multi-modal inputs (text + images + video + audio)?
-│  ├─ Latest model (480p/720p only) → byte_dance.py seedance-2.5
+│  ├─ Latest model (480p/720p/1080p) → byte_dance.py seedance-2.5
 │  └─ Seedance 2.0 (480p-4k) → byte_dance.py seedance
 │
 ├─ Edit a video?
