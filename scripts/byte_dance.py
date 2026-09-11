@@ -2,13 +2,13 @@
 """DreamAPI ByteDance — Seedance 2.5/2.0 video generation and Seedream image generation.
 
 Subcommands:
-    seedance-2.5  Generate video with text/image/video/audio inputs (Seedance 2.5, 480p/720p only)
+    seedance-2.5  Generate video with text/image/video/audio inputs (Seedance 2.5, 480p/720p/1080p)
     seedance       Generate video with text/image/video/audio inputs (Seedance 2.0)
     seedance-mini  Generate video with text/image inputs at lowest cost (Seedance 2.0 Mini)
     seedream       Generate high-quality images from text prompts (Seedream 4.0/4.5/5.0 Lite/5.0 Pro)
 
 Usage:
-    python byte_dance.py seedance-2.5 run --prompt "..." --resolution <480p|720p> --duration <4-30> [--image-url <url>] [--end-image-url <url>] [options]
+    python byte_dance.py seedance-2.5 run --prompt "..." --resolution <480p|720p|1080p> --duration <4-30> [--image-url <url>] [--end-image-url <url>] [options]
     python byte_dance.py seedance run --prompt "..." --resolution <480p|720p|1080p|4k> --duration <4-15> [--image-url <url>] [--end-image-url <url>] [options]
     python byte_dance.py seedance-mini run --prompt "..." --resolution <480p|720p> --duration <4-15> [--image-url <url>] [--end-image-url <url>] [options]
     python byte_dance.py seedream run --prompt "..." [options]
@@ -93,8 +93,8 @@ def build_seedance_2_5_body(args) -> dict:
 
 def add_seedance_2_5_args(p):
     p.add_argument("--prompt", required=True, help="Video description (max 1500 chars)")
-    p.add_argument("--resolution", required=True, choices=["480p", "720p"],
-                   help="Output resolution (480p or 720p only)")
+    p.add_argument("--resolution", required=True, choices=["480p", "720p", "1080p"],
+                   help="Output resolution (480p, 720p, or 1080p)")
     p.add_argument("--duration", required=True, type=int,
                    help="Video duration in seconds (4-30)")
     p.add_argument("--images", nargs="+", default=None,
@@ -339,7 +339,7 @@ TOOLS = {
         "endpoint": SEEDANCE_2_5_PATH,
         "add_args": add_seedance_2_5_args,
         "build_body": build_seedance_2_5_body,
-        "help": "Generate video with text/image/video/audio inputs (Seedance 2.5, 480p/720p only)",
+        "help": "Generate video with text/image/video/audio inputs (Seedance 2.5, 480p/720p/1080p)",
     },
     "seedance": {
         "endpoint": SEEDANCE_PATH,
