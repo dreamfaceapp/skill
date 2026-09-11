@@ -63,6 +63,19 @@ class DreamAPIClient:
         resp.raise_for_status()
         return self._check(resp.json())
 
+    def post_form(self, path: str, data: Optional[dict] = None, **kwargs) -> dict:
+        """POST with application/x-www-form-urlencoded (sync APIs such as credits)."""
+        url = f"{BASE_URL}{path}" if path.startswith("/") else path
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": f"Bearer {self._api_key}",
+        }
+        resp = requests.post(
+            url, headers=headers, data=data if data is not None else {}, timeout=30, **kwargs
+        )
+        resp.raise_for_status()
+        return self._check(resp.json())
+
     def get(self, path: str, params: Optional[dict] = None, **kwargs) -> dict:
         url = f"{BASE_URL}{path}" if path.startswith("/") else path
         resp = requests.get(url, headers=self.headers, params=params, timeout=30, **kwargs)

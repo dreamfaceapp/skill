@@ -6,7 +6,8 @@ Script: `scripts/user.py`
 
 ## Available Credits
 
-- **Endpoint:** `GET /api/user/available_credits`
+- **Endpoint:** `POST /api/remaining_credits`
+- **Content-Type:** `application/x-www-form-urlencoded`
 - **Command:** `python user.py credit`
 
 ### Options

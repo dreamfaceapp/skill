@@ -6,19 +6,20 @@ DreamAPI provides a three-step file upload flow for uploading local files to clo
 
 ### Step 1: Get Upload Policy
 
-- **Endpoint:** `GET /api/getUploadPolicy?fileName=<name>`
-- Returns: `uploadUrl` (presigned URL) and `fileKey`
+- **Endpoint:** `POST /api/file/v1/get_policy`
+- **Body:** `{"scene": "Dream-CN"}`
+- Returns OSS credentials (`host`, `dir`, `accessId`, `policy`, `signature`, `callback`, `reqId`)
 
 ### Step 2: Upload File
 
-- **Method:** `PUT <uploadUrl>`
-- Upload the file binary to the presigned URL with appropriate Content-Type header
+- **Method:** `POST <host>` (multipart form to the OSS endpoint from step 1)
+- Include policy fields plus the file binary
 
 ### Step 3: Get Upload Result
 
-- **Endpoint:** `POST /api/getUploadResult`
-- **Body:** `{"fileKey": "<fileKey>"}`
-- Returns: `fileUrl` (the public URL of the uploaded file)
+- **Endpoint:** `POST /api/file/v1/policy_upload_finish`
+- **Body:** `{"reqId": "<reqId>"}`
+- Returns: `url` (the public URL of the uploaded file)
 
 ## Automatic Upload
 
