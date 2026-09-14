@@ -49,8 +49,16 @@ The real power is chaining capabilities. Describe a goal and the AI orchestrates
 
 ## Installation
 
+From the skill directory after install (Python 3.10+):
+
 ```bash
-npx skills add dreamapi/DreamAPI
+npx skills add dreamfaceapp/skill
+```
+
+Scripts live in `scripts/`. Install dependencies from that skill checkout:
+
+```bash
+pip install -r scripts/requirements.txt
 ```
 
 ## Configuration

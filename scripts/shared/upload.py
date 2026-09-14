@@ -54,6 +54,38 @@ def detect_format(file_path: str) -> str:
     return ext
 
 
+def parse_upload_policy(policy_data: dict, file_name: str) -> dict:
+    """Normalize Get Upload Policy payloads (legacy dir/accessId or official key/OSSAccessKeyId)."""
+    host = policy_data.get("host") or ""
+    access_id = policy_data.get("accessId") or policy_data.get("OSSAccessKeyId") or ""
+    policy = policy_data.get("policy") or ""
+    signature = policy_data.get("signature") or ""
+    callback = policy_data.get("callback") or ""
+    req_id = policy_data.get("reqId") or ""
+    full_key = policy_data.get("key") or ""
+    upload_dir = policy_data.get("dir") or ""
+
+    if full_key:
+        key = full_key
+    elif upload_dir:
+        key = upload_dir + file_name
+    else:
+        key = ""
+
+    if not all([host, key, access_id, policy, signature]):
+        raise RuntimeError("Failed to get complete upload policy from response")
+
+    return {
+        "host": host,
+        "key": key,
+        "access_id": access_id,
+        "policy": policy,
+        "signature": signature,
+        "callback": callback,
+        "req_id": req_id,
+    }
+
+
 def upload_file(
     file_path: str,
     *,
@@ -82,43 +114,31 @@ def upload_file(
         "/api/file/v1/get_policy",
         json={"scene": "Dream-CN"},
     )
-
-    host = policy_data.get("host", "")
-    upload_dir = policy_data.get("dir", "")
-    access_id = policy_data.get("accessId", "")
-    policy = policy_data.get("policy", "")
-    signature = policy_data.get("signature", "")
-    callback = policy_data.get("callback", "")
-    req_id = policy_data.get("reqId", "")
-
-    if not all([host, upload_dir, access_id, policy, signature]):
-        raise RuntimeError("Failed to get complete upload policy from response")
+    parsed = parse_upload_policy(policy_data, file_name)
 
     # Step 2: Upload file
     if not quiet:
         size_mb = os.path.getsize(file_path) / (1024 * 1024)
         print(f"[2/3] Uploading {file_name} ({size_mb:.2f} MB)...", file=sys.stderr)
 
-    key = upload_dir + file_name
-
     with open(file_path, "rb") as f:
         files = {
-            "key": (None, key),
-            "policy": (None, policy),
-            "OSSAccessKeyId": (None, access_id),
-            "signature": (None, signature),
-            "callback": (None, callback),
+            "key": (None, parsed["key"]),
+            "policy": (None, parsed["policy"]),
+            "OSSAccessKeyId": (None, parsed["access_id"]),
+            "signature": (None, parsed["signature"]),
+            "callback": (None, parsed["callback"]),
             "success_action_status": (None, "200"),
             "file": (file_name, f.read(), mime),
         }
 
-        resp = requests.post(host, files=files, timeout=300)
+        resp = requests.post(parsed["host"], files=files, timeout=300)
 
     resp.raise_for_status()
     upload_result = resp.json()
 
     # Get reqId from upload response or policy response
-    upload_req_id = upload_result.get("data", {}).get("reqId", req_id)
+    upload_req_id = upload_result.get("data", {}).get("reqId") or parsed["req_id"]
 
     if not upload_req_id:
         raise RuntimeError("Failed to get reqId from upload response")
@@ -142,6 +162,25 @@ def upload_file(
     return file_url
 
 
+def _is_http_url(file_ref: str) -> bool:
+    lowered = file_ref.lower()
+    return lowered.startswith("http://") or lowered.startswith("https://")
+
+
+def _looks_like_local_path(file_ref: str) -> bool:
+    if _is_http_url(file_ref):
+        return False
+    expanded = os.path.expanduser(file_ref)
+    if os.path.isabs(expanded):
+        return True
+    if expanded.startswith(("./", "../")) or expanded in {".", ".."}:
+        return True
+    if os.sep in expanded or (os.altsep and os.altsep in expanded):
+        return True
+    ext = os.path.splitext(expanded)[1].lstrip(".").lower()
+    return ext in SUPPORTED_FORMATS
+
+
 def resolve_local_file(
     file_ref: str,
     *,
@@ -149,8 +188,16 @@ def resolve_local_file(
     client: Optional[DreamAPIClient] = None,
 ) -> str:
     """If file_ref is a local path, upload it and return URL. Otherwise pass through."""
-    if os.path.isfile(file_ref):
+    if not file_ref or not str(file_ref).strip():
+        raise ValueError("Empty file reference")
+    file_ref = str(file_ref).strip()
+    if _is_http_url(file_ref):
+        return file_ref
+    expanded = os.path.expanduser(file_ref)
+    if os.path.isfile(expanded):
         if not quiet:
             print(f"Detected local file, uploading: {file_ref}", file=sys.stderr)
-        return upload_file(file_ref, quiet=quiet, client=client)
+        return upload_file(expanded, quiet=quiet, client=client)
+    if _looks_like_local_path(file_ref):
+        raise FileNotFoundError(f"Local file not found: {file_ref}")
     return file_ref

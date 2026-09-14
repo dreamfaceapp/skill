@@ -73,8 +73,8 @@ Generate a video directly from a text prompt. Output supports `480P` and `720P`,
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `--prompt` | string | Yes | Text prompt describing the video |
-| `--duration` | int | No | Duration in seconds, range 3–15 (default: `5`) |
-| `--resolution` | string | No | `480P` or `720P` (default: `720P`) |
+| `--duration` | int | No | Duration in seconds, range 3–15. Omit to use the server default (billed as 5 seconds). |
+| `--resolution` | string | No | `480P` or `720P`. Omit to use the server default (not locked by the client). |
 | `--aspect-ratio` | string | No | `auto`, `9:16`, `3:4`, `1:1`, `4:3`, `16:9` (default: `auto`) |
 | `--seed` | int | No | Generation seed (default: `42`) |
 
@@ -94,8 +94,8 @@ Generate a video from one or more images plus a prompt. One image is used as the
 |-----------|------|----------|-------------|
 | `--images` | string[] | Yes | One or more image URLs or local paths. One image = i2v; two or more = first-last (only first two used). JPEG / PNG / WebP |
 | `--prompt` | string | Yes | Text prompt describing the video |
-| `--duration` | int | No | Duration in seconds, range 3–15 (default: `5`) |
-| `--resolution` | string | No | `480P` or `720P` (default: `720P`) |
+| `--duration` | int | No | Duration in seconds, range 3–15. Omit to use the server default (billed as 5 seconds). |
+| `--resolution` | string | No | `480P` or `720P`. Omit to use the server default (not locked by the client). |
 | `--aspect-ratio` | string | No | `auto`, `9:16`, `3:4`, `1:1`, `4:3`, `16:9` (default: `auto`) |
 | `--seed` | int | No | Generation seed (default: `42`) |
 

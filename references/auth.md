@@ -18,7 +18,7 @@ pip install -r {baseDir}/scripts/requirements.txt
 python {baseDir}/scripts/auth.py login
 ```
 
-Paste your API key when prompted. It will be saved to `~/.dreamapi/credentials.json`.
+Paste your API key when prompted (input is hidden). It is saved to `~/.dreamapi/credentials.json` only after verification succeeds, unless you pass `--force`.
 
 ### Option 2 — Environment variable
 
@@ -36,8 +36,9 @@ The scripts check credentials in this order:
 
 | Command | Description |
 |---------|-------------|
-| `python auth.py login` | Save API key (interactive or `--key "sk-..."`) |
-| `python auth.py login --key "sk-..."` | Save API key non-interactively |
+| `python auth.py login` | Hidden prompt; save API key only if verification succeeds |
+| `python auth.py login --key "sk-..."` | Save API key non-interactively (still verifies first) |
+| `python auth.py login --key "sk-..." --force` | Save even if verification fails |
 | `python auth.py status` | Check current auth state and verify key |
 | `python auth.py logout` | Remove saved credentials |
 

@@ -23,10 +23,14 @@ DEFAULT_POLL_TIMEOUT = 600  # 10 minutes
 class DreamAPIError(Exception):
     """Raised when the DreamAPI returns a non-zero response code."""
 
-    def __init__(self, code: int, message: str):
+    def __init__(self, code: int, message: str, task_id: str = ""):
         self.code = code
         self.message = message
-        super().__init__(f"[{code}] {message}")
+        self.task_id = task_id
+        prefix = f"[{code}]"
+        if task_id:
+            prefix += f" taskId={task_id}"
+        super().__init__(f"{prefix} {message}")
 
 
 class DreamAPIClient:
@@ -135,7 +139,14 @@ class DreamAPIClient:
 
             if status == STATUS_FAILED:
                 reason = task_info.get("reason", "Unknown")
-                raise DreamAPIError(-1, f"Task failed: {reason}")
+                error_code = task_info.get("errorCode")
+                if error_code is None:
+                    error_code = -1
+                raise DreamAPIError(
+                    int(error_code),
+                    reason,
+                    task_id=task_id,
+                )
 
     def run_task(
         self,
@@ -182,5 +193,22 @@ class DreamAPIClient:
             result["audios"] = [aud.get("audioUrl", "") for aud in audios]
             result["output_url"] = result["audios"][0]
             result["output_type"] = "audio"
+
+        expire = poll_data.get("expire") or poll_data.get("expireAt")
+        if not expire:
+            expire = task.get("expire") or task.get("expireAt")
+        if not expire:
+            media_items = []
+            if images:
+                media_items.extend(images)
+            if videos:
+                media_items.extend(videos)
+            if audios:
+                media_items.extend(audios)
+            if media_items:
+                first = media_items[0]
+                expire = first.get("expire") or first.get("expireAt") or ""
+        if expire:
+            result["expire"] = expire
 
         return result

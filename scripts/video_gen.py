@@ -117,8 +117,20 @@ def add_headtail_args(p):
 # DreamVideo 3.0 shared optional params
 # ---------------------------------------------------------------------------
 
+def parse_dreamvideo_duration(value: str) -> int:
+    try:
+        duration = int(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("duration must be an integer") from exc
+    if duration < 3 or duration > 15:
+        raise argparse.ArgumentTypeError("duration must be between 3 and 15")
+    return duration
+
+
 def apply_dreamvideo_optional(body, args):
     if args.duration is not None:
+        if args.duration < 3 or args.duration > 15:
+            raise ValueError("DreamVideo duration must be between 3 and 15")
         body["duration"] = args.duration
     if args.resolution is not None:
         body["resolution"] = args.resolution
@@ -129,10 +141,10 @@ def apply_dreamvideo_optional(body, args):
 
 
 def add_dreamvideo_optional_args(p):
-    p.add_argument("--duration", type=int, default=None,
-                   help="Duration in seconds, 3-15 (default: 5)")
+    p.add_argument("--duration", type=parse_dreamvideo_duration, default=None,
+                   help="Duration in seconds, 3-15. Omit to use the server default (5).")
     p.add_argument("--resolution", choices=DREAMVIDEO_RESOLUTIONS, default=None,
-                   help="Output resolution: 480P or 720P (default: 720P)")
+                   help="Output resolution: 480P or 720P. Omit to use the server default.")
     p.add_argument("--aspect-ratio", choices=DREAMVIDEO_ASPECT_RATIOS, default=None,
                    dest="aspect_ratio",
                    help="Aspect ratio (default: auto)")
