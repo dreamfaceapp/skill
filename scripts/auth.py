@@ -16,6 +16,7 @@ Usage:
 """
 
 import argparse
+import getpass
 import json
 import os
 import sys
@@ -106,7 +107,7 @@ def cmd_login(args) -> None:
         print(f"  Get your API key from: {DASHBOARD_URL}")
         print("  Go to Dashboard → API Keys → Copy your key")
         print()
-        api_key = input("  Paste your API key here: ").strip()
+        api_key = getpass.getpass("  Paste your API key here: ").strip()
 
     if not api_key:
         print("Error: No API key provided.", file=sys.stderr)
@@ -129,19 +130,26 @@ def cmd_login(args) -> None:
             print(f"  credits:  {credits_info}")
         print(f"  Saved to: {CRED_FILE}")
         print()
-    else:
-        # Save anyway but warn — the endpoint might not be available
-        print(" (could not verify, saving anyway)")
-        _save_credentials(api_key, extra={"verified": False})
+        return
 
+    print(" FAILED")
+    if not args.force:
         print()
-        print("  API key saved (verification skipped).")
-        print(f"  api_key:  {_mask_key(api_key)}")
-        print(f"  Saved to: {CRED_FILE}")
+        print("  API key could not be verified. Credentials were not saved.")
+        print("  Check the key, or pass --force to save an unverified key.")
+        print(f"  Dashboard: {DASHBOARD_URL}")
         print()
-        print("  If tasks fail with auth errors, double-check your key at:")
-        print(f"  {DASHBOARD_URL}")
-        print()
+        sys.exit(1)
+
+    _save_credentials(api_key, extra={"verified": False})
+    print()
+    print("  API key saved (verification skipped because --force was set).")
+    print(f"  api_key:  {_mask_key(api_key)}")
+    print(f"  Saved to: {CRED_FILE}")
+    print()
+    print("  If tasks fail with auth errors, double-check your key at:")
+    print(f"  {DASHBOARD_URL}")
+    print()
 
 
 def cmd_status(args) -> None:
@@ -219,8 +227,9 @@ Subcommands:
   logout  Remove saved credentials
 
 Examples:
-  python auth.py login                      # interactive: paste your key
+  python auth.py login                      # hidden prompt; save if verified
   python auth.py login --key "sk-abc..."    # non-interactive
+  python auth.py login --key "sk-abc..." --force
   python auth.py status                     # check if authenticated
   python auth.py logout                     # remove credentials
 """,
@@ -232,6 +241,10 @@ Examples:
     p_login.add_argument(
         "--key", default=None,
         help="API key (skip interactive prompt)",
+    )
+    p_login.add_argument(
+        "--force", action="store_true",
+        help="Save the key even if verification fails",
     )
 
     sub.add_parser("status", help="Check current authentication state")

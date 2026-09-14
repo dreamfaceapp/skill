@@ -21,8 +21,8 @@ Generate videos using the Seedance 2.5 model with support for text prompts, refe
 | `--images` | string | No | Reference image URLs or local paths (max 9) |
 | `--image-url` | string | No | First-frame image URL or local path (JPEG/PNG/WebP). Enables image-to-video mode |
 | `--end-image-url` | string | No | Last-frame image URL or local path. Only valid with `--image-url` |
-| `--videos` | string | No | Reference video URLs (max 10, each 2-30s, total max 30s) |
-| `--audios` | string | No | Audio URLs (max 3) |
+| `--videos` | string | No | Reference video URLs or local paths (max 10, each 2-30s, total max 30s) |
+| `--audios` | string | No | Audio URLs or local paths (max 3) |
 | `--ratio` | string | No | Aspect ratio (default: adaptive) |
 | `--seed` | integer | No | Random seed for reproducible results |
 | `--generate-audio` | boolean | No | Generate audio for the video (default: false) |
@@ -67,8 +67,8 @@ Generate videos using the Seedance 2.0 model with support for text prompts, refe
 | `--images` | string | No | Reference image URLs or local paths (max 9) |
 | `--image-url` | string | No | First-frame image URL or local path (JPEG/PNG/WebP). Enables image-to-video mode |
 | `--end-image-url` | string | No | Last-frame image URL or local path. Only valid with `--image-url` |
-| `--videos` | string | No | Reference video URLs (max 3, total max 15s) |
-| `--audios` | string | No | Audio URLs (max 3) |
+| `--videos` | string | No | Reference video URLs or local paths (max 3, total max 15s) |
+| `--audios` | string | No | Audio URLs or local paths (max 3) |
 | `--ratio` | string | No | Aspect ratio (default: adaptive) |
 | `--seed` | integer | No | Random seed for reproducible results |
 | `--generate-audio` | boolean | No | Generate audio for the video (default: false) |
@@ -114,8 +114,8 @@ Generate videos at the lowest cost using the Seedance 2.0 Mini model, ideal for 
 | `--images` | string | No | Reference image URLs or local paths (max 9) |
 | `--image-url` | string | No | First-frame image URL or local path (JPEG/PNG/WebP). Enables image-to-video mode |
 | `--end-image-url` | string | No | Last-frame image URL or local path. Only valid with `--image-url` |
-| `--videos` | string | No | Reference video URLs (max 3, total max 15s) |
-| `--audios` | string | No | Audio URLs (max 3) |
+| `--videos` | string | No | Reference video URLs or local paths (max 3, total max 15s) |
+| `--audios` | string | No | Audio URLs or local paths (max 3) |
 | `--ratio` | string | No | Aspect ratio (default: adaptive) |
 | `--seed` | integer | No | Random seed for reproducible results |
 | `--generate-audio` | boolean | No | Generate audio for the video (default: false) |

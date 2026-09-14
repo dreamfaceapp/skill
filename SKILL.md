@@ -1,10 +1,10 @@
 ---
 name: dreamapi-skill
 description: "36 AI-powered tools for video generation, talking avatars, image editing, voice cloning, Google Gemini image generation, virtual try-on, OpenAI GPT image, DreamImage, and more — powered by DreamAPI. Describe what you want and the agent handles the rest."
+compatibility: Requires Python 3.10+
 metadata:
   tags: dreamapi, avatar, lipsync, video, image, voice, tts, flux, wan2.1, ai, api, text2image, image2video, face-swap, remove-bg, video-translate, voice-clone, google-gemini, image-gen, try-on, openai, gpt-image, seedream, dreamimage, dreamvideo
-  requires:
-    bins: [python3]
+  requires: python3
   primaryEnv: DREAMAPI_API_KEY
 ---
 
@@ -22,11 +22,12 @@ metadata:
 
 1. **Keep replies short** — give the result or next step directly.
 2. **Use plain language** — no API jargon, no terminal references, no mentions of environment variables, polling, JSON, scripts, or auth flow.
-3. **Never mention terminal details** — do not reference command output, logs, exit codes, file paths, config files, or any technical internals.
-4. **Always send the login link directly** — when login is needed, provide the DreamAPI Dashboard link: `https://api.newportai.com/`
-5. **Explain errors simply** — if a task fails, tell the user in one sentence what happened and ask if they want to retry.
-6. **Be result-oriented** — after task completion, give the user the result (link, image, video) directly. Do not describe intermediate steps.
-7. **Give time estimates** — after submitting a task, tell the user the estimated wait time from the table below.
+3. **Never mention terminal details by default** — do not reference command output, logs, exit codes, file paths, config files, or internals.
+4. **Debugging exception** — if the user is integrating or asks why a task failed technically, you MAY share `taskId`, HTTP/API/task error codes, and redacted diagnostics. Do not dump raw logs, local paths, or full JSON unless they ask. Never mention `creditsConsumed` in user-facing replies.
+5. **Always send the login link directly** — when login is needed, provide the DreamAPI Dashboard link: `https://api.newportai.com/`
+6. **Explain errors simply** — if a task fails, tell the user in one sentence what happened and ask if they want to retry (after a paid generation failure, ask before resubmitting).
+7. **Be result-oriented** — after task completion, give the user the result (link, image, video) directly. Do not describe intermediate steps.
+8. **Give time estimates** — after submitting a task, tell the user the estimated wait time from the table below.
 
 **Estimated Generation Time**
 
@@ -90,18 +91,20 @@ pip install -r {baseDir}/scripts/requirements.txt
 
 > **These rules apply to ALL generation modules.**
 
-1. **Always start with `run`** — it submits the task and polls automatically until done.
-2. **Do NOT ask the user to check the task status themselves.** The agent polls until completion.
-3. **Only use `query`** when `run` has already timed out and you have a `taskId` to resume.
-4. **If `query` also times out**, increase `--timeout` and try again with the same `taskId`.
-5. **Do not resubmit** unless the task has actually failed.
+1. **Single new generation → `run`** — submits the task and polls until done.
+2. **Parallel independent tasks → `submit` then `query`** — only when the user wants multiple independent jobs at once. Do not use `submit` for a single request.
+3. **Do NOT ask the user to check the task status themselves.** The agent polls until completion.
+4. **Timeouts resume the same task** — use `query --task-id <id>`. Never submit a new paid task just because polling timed out.
+5. **Transient transport errors** (network timeout, HTTP 429, HTTP 500 while polling) — retry the **same** `taskId` once. Do not create a new task.
+6. **Paid generation failure (`status=4`)** — explain simply, then **ask before** resubmitting with `run`.
 
 ```
 Decision tree:
-  → New request?           use `run`
-  → run timed out?         use `query --task-id <id>`
-  → query timed out?       use `query --task-id <id> --timeout 1200`
-  → task status=fail?      resubmit with `run`
+  → Single new request?              use `run`
+  → User asked for parallel jobs?    use `submit`, then `query --task-id`
+  → run/query timed out?             use `query --task-id <id>` (same task)
+  → poll hit 429/500/network once?   retry `query` with the same taskId
+  → task status=4 (failed)?          ask the user, then `run` only if they confirm
 ```
 
 **Task Status Codes:**
@@ -250,12 +253,12 @@ What does the user need?
 ### During Execution
 
 1. **Local files auto-upload** — scripts detect local paths and upload via DreamAPI Storage automatically
-2. **Parallelize independent tasks** — independent generation tasks can run concurrently via `submit`
+2. **Parallelize independent tasks** — only when the user wants concurrent jobs: `submit` each, then `query` by `taskId`. A single request still uses `run`.
 3. **Keep consistency** — when generating multiple related outputs, use consistent parameters
 
 ### After Execution
 
-Show the result URL first, then key metadata. Keep it clean.
+Show the result URL first, then key metadata (expiry if present). Never include `creditsConsumed`.
 
 **Result template:**
 

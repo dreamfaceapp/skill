@@ -28,18 +28,19 @@ The `run` action in every script handles polling automatically:
 
 ## Agent Workflow Rules
 
-1. **Always use `run`** for new requests — it submits and polls automatically.
-2. **Never ask the user to check status manually.** The agent polls to completion.
-3. **Only use `query`** when `run` timed out and you have a `taskId` to resume.
-4. **If `query` also times out**, increase `--timeout` and try again with the same `taskId`.
-5. **Do not resubmit** unless the task status is actually "failed" (code 4).
+1. **Single new request → `run`**.
+2. **Parallel independent jobs → `submit` then `query`**.
+3. **Never ask the user to check status manually.** The agent polls to completion.
+4. **Timeouts and transient poll errors resume the same `taskId`** — do not submit a new paid task.
+5. **`status=4`** — ask before resubmitting with `run`.
 
 ```
 Decision tree:
-  → New request?           use `run`
-  → run timed out?         use `query --task-id <id>`
-  → query timed out?       use `query --task-id <id> --timeout 1200`
-  → task status=fail?      resubmit with `run`
+  → Single new request?              use `run`
+  → User asked for parallel jobs?    use `submit`, then `query --task-id`
+  → run/query timed out?             use `query --task-id <id>` (same task)
+  → poll hit 429/500/network once?   retry `query` with the same taskId
+  → task status=4 (failed)?          ask the user, then `run` only if they confirm
 ```
 
 ## Response Format (Success)

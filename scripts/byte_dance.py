@@ -79,9 +79,13 @@ def build_seedance_2_5_body(args) -> dict:
     if args.images:
         body["images"] = [resolve_local_file(img, quiet=args.quiet) for img in args.images]
     if args.videos:
-        body["videos"] = args.videos
+        body["videos"] = [
+            resolve_local_file(video, quiet=args.quiet) for video in args.videos
+        ]
     if args.audios:
-        body["audios"] = args.audios
+        body["audios"] = [
+            resolve_local_file(audio, quiet=args.quiet) for audio in args.audios
+        ]
     if args.ratio:
         body["ratio"] = args.ratio
     if args.seed is not None:
@@ -101,9 +105,9 @@ def add_seedance_2_5_args(p):
                    help="Reference image URLs or local paths (max 9)")
     add_seedance_frame_args(p)
     p.add_argument("--videos", nargs="+", default=None,
-                   help="Reference video URLs (max 3, total max 15s)")
+                   help="Reference video URLs or local paths (max 10, each 2-30s, total max 30s)")
     p.add_argument("--audios", nargs="+", default=None,
-                   help="Audio URLs (max 3)")
+                   help="Audio URLs or local paths (max 3)")
     p.add_argument("--ratio", default="adaptive",
                    help="Aspect ratio (default: adaptive)")
     p.add_argument("--seed", type=int, default=None,
@@ -126,9 +130,13 @@ def build_seedance_body(args) -> dict:
     if args.images:
         body["images"] = [resolve_local_file(img, quiet=args.quiet) for img in args.images]
     if args.videos:
-        body["videos"] = args.videos
+        body["videos"] = [
+            resolve_local_file(video, quiet=args.quiet) for video in args.videos
+        ]
     if args.audios:
-        body["audios"] = args.audios
+        body["audios"] = [
+            resolve_local_file(audio, quiet=args.quiet) for audio in args.audios
+        ]
     if args.ratio:
         body["ratio"] = args.ratio
     if args.seed is not None:
@@ -148,9 +156,9 @@ def add_seedance_args(p):
                    help="Reference image URLs or local paths (max 9)")
     add_seedance_frame_args(p)
     p.add_argument("--videos", nargs="+", default=None,
-                   help="Reference video URLs (max 3, total max 15s)")
+                   help="Reference video URLs or local paths (max 3, total max 15s)")
     p.add_argument("--audios", nargs="+", default=None,
-                   help="Audio URLs (max 3)")
+                   help="Audio URLs or local paths (max 3)")
     p.add_argument("--ratio", default="adaptive",
                    help="Aspect ratio (default: adaptive)")
     p.add_argument("--seed", type=int, default=None,
@@ -173,9 +181,13 @@ def build_seedance_mini_body(args) -> dict:
     if args.images:
         body["images"] = [resolve_local_file(img, quiet=args.quiet) for img in args.images]
     if args.videos:
-        body["videos"] = args.videos
+        body["videos"] = [
+            resolve_local_file(video, quiet=args.quiet) for video in args.videos
+        ]
     if args.audios:
-        body["audios"] = args.audios
+        body["audios"] = [
+            resolve_local_file(audio, quiet=args.quiet) for audio in args.audios
+        ]
     if args.ratio:
         body["ratio"] = args.ratio
     if args.seed is not None:
@@ -195,9 +207,9 @@ def add_seedance_mini_args(p):
                    help="Reference image URLs or local paths (max 9)")
     add_seedance_frame_args(p)
     p.add_argument("--videos", nargs="+", default=None,
-                   help="Reference video URLs (max 3, total max 15s)")
+                   help="Reference video URLs or local paths (max 3, total max 15s)")
     p.add_argument("--audios", nargs="+", default=None,
-                   help="Audio URLs (max 3)")
+                   help="Audio URLs or local paths (max 3)")
     p.add_argument("--ratio", default="adaptive",
                    help="Aspect ratio (default: adaptive)")
     p.add_argument("--seed", type=int, default=None,
