@@ -1,6 +1,6 @@
 # DreamAPI Skill
 
-An AI agent skill that gives you access to 36 AI-powered tools for video generation, talking avatars, image editing, voice cloning, and more — all by simply describing what you want in natural language.
+An AI agent skill that gives you access to 40 AI-powered tools for video generation, talking avatars, image editing, voice cloning, and more — all by simply describing what you want in natural language.
 
 This skill follows the [Agent Skills specification](https://agentskills.io/specification) and works with any compatible AI coding assistant (Cursor, Claude Code, etc.).
 
@@ -32,7 +32,7 @@ The real power is chaining capabilities. Describe a goal and the AI orchestrates
 
 **Portrait restoration** — colorize a B&W photo, enhance resolution, then animate it into a short video clip.
 
-## Available Tools (36)
+## Available Tools (40)
 
 | Category | Tools | Script |
 |----------|-------|--------|
@@ -44,7 +44,7 @@ The real power is chaining capabilities. Describe a goal and the AI orchestrates
 | Video Translate (1) | Video Translate 2.0 | `scripts/video_translate.py` |
 | ByteDance (4) | Seedance 2.5, Seedance 2.0, Seedance 2.0 Mini, Seedream (4.0/4.5/5.0 Lite/5.0 Pro) | `scripts/byte_dance.py` |
 | Google (2) | Nano Banana 2, Nano Banana Pro | `scripts/google_gen.py` |
-| OpenAI (1) | GPT Image 2 | `scripts/open_ai.py` |
+| OpenAI (5) | GPT Image 2, GPT Image 2.5 Flare T2I/I2I, GPT Image 2.5 Sunburst T2I/I2I | `scripts/open_ai.py` |
 | Voice (5) | Voice Clone, TTS Clone, TTS Common, TTS Pro, Voice List | `scripts/voice.py` |
 
 ## Installation

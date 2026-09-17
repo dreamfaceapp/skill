@@ -1,6 +1,6 @@
 ---
 name: dreamapi-skill
-description: "36 AI-powered tools for video generation, talking avatars, image editing, voice cloning, Google Gemini image generation, virtual try-on, OpenAI GPT image, DreamImage, and more — powered by DreamAPI. Describe what you want and the agent handles the rest."
+description: "40 AI-powered tools for video generation, talking avatars, image editing, voice cloning, Google Gemini image generation, virtual try-on, OpenAI GPT image, DreamImage, and more — powered by DreamAPI. Describe what you want and the agent handles the rest."
 compatibility: Requires Python 3.10+
 metadata:
   tags: dreamapi, avatar, lipsync, video, image, voice, tts, flux, wan2.1, ai, api, text2image, image2video, face-swap, remove-bg, video-translate, voice-clone, google-gemini, image-gen, try-on, openai, gpt-image, seedream, dreamimage, dreamvideo
@@ -10,7 +10,7 @@ metadata:
 
 # DreamAPI Skill
 
-> 36 AI tools powered by [DreamAPI](https://api.newportai.com/) — from Newport AI.
+> 40 AI tools powered by [DreamAPI](https://api.newportai.com/) — from Newport AI.
 
 ## Execution Rule
 
@@ -38,6 +38,7 @@ metadata:
 | DreamImage 2.0 | ~30s–1 min |
 | Google Gemini Image | ~30s–1 min |
 | OpenAI GPT Image 2 | ~30s–1 min |
+| OpenAI GPT Image 2.5 | ~30s–3 min |
 | Image Editing (Colorize / Enhance / etc.) | ~30s–1 min |
 | Virtual Try-On | ~30s–1 min |
 | Video Generation (Wan2.1) | ~3–5 min |
@@ -128,7 +129,7 @@ Decision tree:
 | Video Translate | `scripts/video_translate.py` | [video_translate.md](references/video_translate.md) | Video Translate 2.0 (en/zh/es) |
 | ByteDance | `scripts/byte_dance.py` | [byte_dance.md](references/byte_dance.md) | Seedance 2.5, Seedance 2.0, Seedance 2.0 Mini, Seedream (4.0/4.5/5.0 Lite/5.0 Pro) |
 | Google | `scripts/google_gen.py` | [google_gen.md](references/google_gen.md) | Nano Banana 2, Nano Banana Pro |
-| OpenAI | `scripts/open_ai.py` | [open_ai.md](references/open_ai.md) | GPT Image 2 |
+| OpenAI | `scripts/open_ai.py` | [open_ai.md](references/open_ai.md) | GPT Image 2, GPT Image 2.5 Flare/Sunburst text-to-image and image-to-image |
 | Voice | `scripts/voice.py` | [voice.md](references/voice.md) | Voice Clone, TTS Clone, TTS Common, TTS Pro, Voice List |
 | User | `scripts/user.py` | [user.md](references/user.md) | Credit balance |
 
@@ -154,12 +155,17 @@ What does the user need?
 │  │  ├─ Budget → --model seedream-5.0-lite
 │  │  └─ Standard → --model seedream-4.5 or seedream-4.0
 │  ├─ Using Google Gemini → google_gen.py nano-banana-2 or nano-banana-pro
-│  └─ Using OpenAI → open_ai.py gpt-image
+│  ├─ Using OpenAI GPT Image 2 → open_ai.py gpt-image
+│  ├─ Using OpenAI GPT Image 2.5 Flare (faster) → open_ai.py gpt-image-2.5-flare-text-to-image
+│  └─ Using OpenAI GPT Image 2.5 Sunburst → open_ai.py gpt-image-2.5-sunburst-text-to-image
 │
 ├─ Transform an existing image?
 │  ├─ Using Flux → image_gen.py image2image
 │  ├─ Using DreamImage 2.0 (natural language edit) → image_gen.py dreamimage
-│  └─ Using Seedream (image-to-image) → byte_dance.py seedream --model seedream-5.0-pro [+ --image]
+│  ├─ Using Seedream (image-to-image) → byte_dance.py seedream --model seedream-5.0-pro [+ --image]
+│  ├─ Using OpenAI GPT Image 2 → open_ai.py gpt-image --images
+│  ├─ Using OpenAI GPT Image 2.5 Flare → open_ai.py gpt-image-2.5-flare-image-to-image --images
+│  └─ Using OpenAI GPT Image 2.5 Sunburst → open_ai.py gpt-image-2.5-sunburst-image-to-image --images
 │
 ├─ Edit an image?
 │  ├─ Colorize B&W photo → image_edit.py colorize
@@ -236,6 +242,10 @@ What does the user need?
 | "Generate image with Google Gemini (fast)" | `google_gen.py nano-banana-2 run` |
 | "Generate premium image with Google Gemini" | `google_gen.py nano-banana-pro run` |
 | "Generate image with OpenAI model" | `open_ai.py gpt-image run` |
+| "Generate image with GPT Image 2.5 Flare" | `open_ai.py gpt-image-2.5-flare-text-to-image run` |
+| "Generate image with GPT Image 2.5 Sunburst" | `open_ai.py gpt-image-2.5-sunburst-text-to-image run` |
+| "Edit this image with GPT Image 2.5 Flare" | `open_ai.py gpt-image-2.5-flare-image-to-image run --images` |
+| "Edit this image with GPT Image 2.5 Sunburst" | `open_ai.py gpt-image-2.5-sunburst-image-to-image run --images` |
 | "Swap the face in this video" | `video_edit.py swap-face run` |
 | "Remove the video background" | `video_edit.py matting run` |
 | "Replace the video background with..." | `video_edit.py matting run` + `composite run` |
@@ -288,7 +298,7 @@ See [references/error_handling.md](references/error_handling.md) for error codes
 | Voice | Voice Clone, TTS Clone, TTS Common, TTS Pro, Voice List | 5 |
 | ByteDance | Seedance 2.5, Seedance 2.0, Seedance 2.0 Mini, Seedream (4.0/4.5/5.0 Lite/5.0 Pro) | 4 |
 | Google | Nano Banana 2, Nano Banana Pro | 2 |
-| OpenAI | GPT Image 2 | 1 |
-| **Total** | | **36** |
+| OpenAI | GPT Image 2, GPT Image 2.5 Flare T2I/I2I, GPT Image 2.5 Sunburst T2I/I2I | 5 |
+| **Total** | | **40** |
 
 > **Never promise capabilities that don't exist as modules.**
