@@ -9,7 +9,7 @@ Script: `scripts/byte_dance.py`
 Generate videos using the Seedance 2.5 model with support for text prompts, reference images, reference videos, and audio.
 
 - **Endpoint:** `POST /api/async/seedance_2.5`
-- **Command:** `python byte_dance.py seedance-2.5 run --prompt "..." --resolution <480p|720p|1080p> --duration <4-30> [options]`
+- **Command:** `python byte_dance.py seedance-2.5 run --prompt "..." --resolution <480p|720p|1080p> --duration <4-30> [--omni-reference-task-type <reference|edit|extend>] [options]`
 
 ### Parameters
 
@@ -17,7 +17,7 @@ Generate videos using the Seedance 2.5 model with support for text prompts, refe
 |-----------|------|----------|-------------|
 | `--prompt` | string | Yes | Video description (max 1500 chars) |
 | `--resolution` | string | Yes | Output resolution: "480p", "720p", or "1080p" |
-| `--duration` | integer | Yes | Video duration in seconds (4-30) |
+| `--duration` | integer | Yes | Video duration in seconds (4-30). In `edit` mode this does not control output length; output follows the longest video in `--videos` |
 | `--images` | string | No | Reference image URLs or local paths (max 9) |
 | `--image-url` | string | No | First-frame image URL or local path (JPEG/PNG/WebP). Enables image-to-video mode |
 | `--end-image-url` | string | No | Last-frame image URL or local path. Only valid with `--image-url` |
@@ -26,11 +26,12 @@ Generate videos using the Seedance 2.5 model with support for text prompts, refe
 | `--ratio` | string | No | Aspect ratio (default: adaptive) |
 | `--seed` | integer | No | Random seed for reproducible results |
 | `--generate-audio` | boolean | No | Generate audio for the video (default: false) |
+| `--omni-reference-task-type` | choice | No | Task type when `--videos` is provided: `reference`, `edit`, `extend`. Default when omitted: `reference`. `auto` and other values are rejected. `edit` and `extend` require `--videos` and `--ratio adaptive` |
 
 ### Tips
 
 - Seedance 2.5 supports 480p, 720p, and 1080p. It does not support 4k.
-- Video duration range is 4-30 seconds.
+- Video duration range is 4-30 seconds. When `--omni-reference-task-type edit`, output duration follows the longest input video in `--videos` instead of `--duration`.
 - Provide `--image-url` to generate from a first frame (image-to-video). Add `--end-image-url` for first-last frame transition. `--end-image-url` without `--image-url` returns error 10192.
 - The model does not support reference images or videos containing real human faces.
 - Audio is only effective when images or videos are provided.
@@ -48,7 +49,7 @@ Reference To Video billing formula:
 
 `Credits = Output Video Credits × Duration (seconds) + Reference Video Credits × Total Reference Video Duration (seconds)`
 
-The reference video duration is the sum of the durations of all reference videos in `--videos` (up to 10 videos, each 2-30 seconds, total max 30 seconds). Text/Image To Video are billed by output duration only. `generateAudio` is not billed.
+The reference video duration is the sum of the durations of all reference videos in `--videos` (up to 10 videos, each 2-30 seconds, total max 30 seconds). Text/Image To Video are billed by output duration only. In `edit` mode, output duration follows the longest input video. `generateAudio` is not billed.
 
 ## Seedance 2.0
 

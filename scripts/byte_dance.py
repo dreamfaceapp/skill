@@ -8,7 +8,7 @@ Subcommands:
     seedream       Generate high-quality images from text prompts (Seedream 4.0/4.5/5.0 Lite/5.0 Pro)
 
 Usage:
-    python byte_dance.py seedance-2.5 run --prompt "..." --resolution <480p|720p|1080p> --duration <4-30> [--image-url <url>] [--end-image-url <url>] [options]
+    python byte_dance.py seedance-2.5 run --prompt "..." --resolution <480p|720p|1080p> --duration <4-30> [--omni-reference-task-type <reference|edit|extend>] [--image-url <url>] [--end-image-url <url>] [options]
     python byte_dance.py seedance run --prompt "..." --resolution <480p|720p|1080p|4k> --duration <4-15> [--image-url <url>] [--end-image-url <url>] [options]
     python byte_dance.py seedance-mini run --prompt "..." --resolution <480p|720p> --duration <4-15> [--image-url <url>] [--end-image-url <url>] [options]
     python byte_dance.py seedream run --prompt "..." [options]
@@ -92,6 +92,8 @@ def build_seedance_2_5_body(args) -> dict:
         body["seed"] = args.seed
     if args.generate_audio:
         body["generateAudio"] = True
+    if args.omni_reference_task_type is not None:
+        body["omniReferenceTaskType"] = args.omni_reference_task_type
     return apply_seedance_frame_body(body, args)
 
 
@@ -114,6 +116,13 @@ def add_seedance_2_5_args(p):
                    help="Random seed for reproducible results")
     p.add_argument("--generate-audio", action="store_true",
                    help="Generate audio for the video")
+    p.add_argument(
+        "--omni-reference-task-type",
+        default=None,
+        choices=["reference", "edit", "extend"],
+        dest="omni_reference_task_type",
+        help="Task type when using --videos: reference, edit, or extend. Omit for default reference.",
+    )
 
 
 # ---------------------------------------------------------------------------
