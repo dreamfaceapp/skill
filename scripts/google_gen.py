@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
-"""DreamAPI Google — Google Gemini image generation (Nano Banana 2 & Nano Banana Pro).
+"""DreamAPI Google — Google Gemini image generation (Nano Banana 2, Pro, and Lite).
 
 Subcommands:
     nano-banana-2   Generate images with Gemini 3.1 Flash Image Preview model
     nano-banana-pro Generate images with Gemini 3 Pro Image Preview model
+    nano-banana-lite Generate 1K images with Gemini 3.1 Flash Lite Image (text-to-image or image-to-image)
 
 Usage:
     python google_gen.py nano-banana-2 run --text "..." [options]
     python google_gen.py nano-banana-pro run --text "..." [options]
+    python google_gen.py nano-banana-lite run --text "..." [options]
+    python google_gen.py nano-banana-lite run --text "..." --images <image-url-or-path> [more images...]
 """
 
 import argparse
@@ -21,6 +24,9 @@ from shared.client import DreamAPIClient
 from shared.upload import resolve_local_file
 
 GEMINI_IMAGE_PATH = "/api/async/google_gemini_image"
+GEMINI_IMAGE_LITE_PATH = "/api/async/google_gemini_image_lite"
+
+LITE_ASPECT_RATIOS = ["1:1", "2:3", "3:2", "3:4", "4:3", "4:5", "5:4", "9:16", "16:9", "21:9"]
 
 DEFAULT_TIMEOUT = 600
 DEFAULT_INTERVAL = 5
@@ -105,6 +111,34 @@ def add_nano_banana_pro_args(p):
 
 
 # ---------------------------------------------------------------------------
+# Nano Banana Lite — Gemini 3.1 Flash Lite Image
+# ---------------------------------------------------------------------------
+
+def build_nano_banana_lite_body(args) -> dict:
+    body = {"text": args.text}
+    if args.image_size:
+        body["imageSize"] = args.image_size
+    if args.aspect_ratio:
+        body["aspectRatio"] = args.aspect_ratio
+    if args.images:
+        if len(args.images) > 14:
+            raise ValueError("Nano Banana Lite supports at most 14 reference images")
+        body["images"] = [resolve_local_file(img, quiet=args.quiet) for img in args.images]
+    return body
+
+
+def add_nano_banana_lite_args(p):
+    p.add_argument("--text", required=True,
+                   help="Text prompt describing the image to generate or edit")
+    p.add_argument("--image-size", default=None, type=str.upper, choices=["1K"],
+                   help="Output resolution: 1K (default)")
+    p.add_argument("--aspect-ratio", default=None, choices=LITE_ASPECT_RATIOS,
+                   help="Output aspect ratio (default: 9:16)")
+    p.add_argument("--images", nargs="+", default=None, metavar="IMAGE",
+                   help="Optional for text-to-image; provide 1–14 reference image URLs or local paths for image-to-image, in prompt order")
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -120,6 +154,12 @@ TOOLS = {
         "add_args": add_nano_banana_pro_args,
         "build_body": build_nano_banana_pro_body,
         "help": "Generate images with Gemini 3 Pro Image Preview (Nano Banana Pro)",
+    },
+    "nano-banana-lite": {
+        "endpoint": GEMINI_IMAGE_LITE_PATH,
+        "add_args": add_nano_banana_lite_args,
+        "build_body": build_nano_banana_lite_body,
+        "help": "Generate or edit 1K images with Gemini 3.1 Flash Lite Image (Nano Banana Lite)",
     },
 }
 
