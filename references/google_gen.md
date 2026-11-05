@@ -61,3 +61,30 @@ Generate premium, high-fidelity images using the Gemini 3 Pro Image Preview mode
 
 - Both 1K and 2K cost the same credits (35). Use 2K for the best quality.
 - Reference images can be URLs or local file paths (auto-uploaded).
+
+## Nano Banana Lite
+
+Generate 1K images with Gemini 3.1 Flash Lite Image. Use the same command for text-to-image and image-to-image: omit `--images` for text-to-image, or provide 1–14 reference images for image-to-image.
+
+- **Endpoint:** `POST /api/async/google_gemini_image_lite`
+- **Command (text-to-image):** `python google_gen.py nano-banana-lite run --text "..." [options]`
+- **Command (image-to-image):** `python google_gen.py nano-banana-lite run --text "..." --images <image-url-or-path> [more images...] [options]`
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `--text` | string | Yes | Prompt describing the image to generate or edit |
+| `--image-size` | string | No | `1K` only (default: `1K`) |
+| `--aspect-ratio` | string | No | `1:1`, `2:3`, `3:2`, `3:4`, `4:3`, `4:5`, `5:4`, `9:16`, `16:9`, or `21:9` (default: `9:16`) |
+| `--images` | string[] | For image-to-image | 1–14 reference image URLs or local paths, in prompt order. Omit for text-to-image. Local files are auto-uploaded. |
+
+The `model` request field is omitted; the API defaults to `gemini-3.1-flash-lite-image`. If supplied directly, it must use that exact model ID.
+
+### Pricing
+
+| Resolution | Credits per image |
+|------------|-------------------|
+| 1K | 10 |
+
+Text-to-image and image-to-image use the same fixed price.
