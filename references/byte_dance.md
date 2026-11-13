@@ -51,6 +51,17 @@ Reference To Video billing formula:
 
 The reference video duration is the sum of the durations of all reference videos in `--videos` (up to 10 videos, each 2-30 seconds, total max 30 seconds). Text/Image To Video are billed by output duration only. In `edit` mode, output duration follows the longest input video. `generateAudio` is not billed.
 
+## Seedance 2.5 Draft
+
+Generate a 480p draft, then optionally create a 1080p final video from the returned draft ID. Each stage is billed separately.
+
+- **Endpoint:** `POST /api/async/seedance_2.5`
+- **Draft:** `python scripts/byte_dance.py seedance-2.5-draft run --prompt "A cat walking" --resolution 480p --duration 4 --json`
+- Draft generation supports the same input flags as Seedance 2.5, including `--image-url`, `--end-image-url`, `--images`, `--videos`, and `--audios`. The request adds `draft: true`. Use `--json` to retain the top-level `draftTaskIds` array in CLI output (corresponding to `data.draftTaskIds` in the API response).
+- **Final:** `python scripts/byte_dance.py seedance-2.5-draft-complete run --draft-task-ids <draft-id> --json`
+- Use the single ID from the CLI JSON `draftTaskIds` array, not the submission `taskId`. The final request sends only `model`, `resolution: 1080p`, and `draftTaskIds`. Use the same account within 14 days; the final inherits the draft inputs and settings.
+- With no reference video, the documented rates are 27 credits/second for 480p draft and 155 credits/second for 1080p final; reference-video durations are billed separately for both stages. Verify current prices before use.
+
 ## Seedance 2.0
 
 Generate videos using the Seedance 2.0 model with support for text prompts, reference images, reference videos, and audio.
@@ -177,3 +188,12 @@ Generate high-quality images from text prompts using the Seedream model. Support
 | seedream-5.0-lite | 9 |
 | seedream-4.5 | 10 |
 | seedream-4.0 | 8 |
+
+## Seedream 5.5
+
+Generate images from text or reference images using the independent `POST /api/async/seedream_5.5` endpoint.
+
+- Text: `python scripts/byte_dance.py seedream-5.5 run --prompt "A watercolor cat" --size 1K`
+- Image: `python scripts/byte_dance.py seedream-5.5 run --prompt "Make it watercolor" --image <image-url-or-local-path> --size 1K`
+- `--image` accepts up to 10 URLs or local paths and sends the `image` array. `--seed` is optional. `--size` accepts `1K`, `1.5K`, `2K`, or exact `WIDTHxHEIGHT`; verify additional pixel limits against the API.
+- Base output price is 5 credits for 1K/1.5K or at most 2,610,000 pixels, and 10 credits for 2K or more than 2,610,000 pixels; an omitted size is billed at 10 credits. Add 2 credits for each reference image.
