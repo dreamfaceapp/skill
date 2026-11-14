@@ -3,9 +3,12 @@
 
 Subcommands:
     seedance-2.5  Generate video with text/image/video/audio inputs (Seedance 2.5, 480p/720p/1080p)
+    seedance-2.5-draft  Generate a 480p draft
+    seedance-2.5-draft-complete  Generate a 1080p final video from a draft ID
     seedance       Generate video with text/image/video/audio inputs (Seedance 2.0)
     seedance-mini  Generate video with text/image inputs at lowest cost (Seedance 2.0 Mini)
     seedream       Generate high-quality images from text prompts (Seedream 4.0/4.5/5.0 Lite/5.0 Pro)
+    seedream-5.5   Generate or edit images with Seedream 5.5
 
 Usage:
     python byte_dance.py seedance-2.5 run --prompt "..." --resolution <480p|720p|1080p> --duration <4-30> [--omni-reference-task-type <reference|edit|extend>] [--image-url <url>] [--end-image-url <url>] [options]
@@ -27,6 +30,7 @@ from shared.upload import resolve_local_file
 SEEDANCE_2_5_PATH = "/api/async/seedance_2.5"
 SEEDANCE_PATH = "/api/async/seedance_2.0"
 SEEDREAM_PATH = "/api/async/seedream"
+SEEDREAM_5_5_PATH = "/api/async/seedream_5.5"
 
 DEFAULT_TIMEOUT = 600
 DEFAULT_INTERVAL = 5
@@ -123,6 +127,27 @@ def add_seedance_2_5_args(p):
         dest="omni_reference_task_type",
         help="Task type when using --videos: reference, edit, or extend. Omit for default reference.",
     )
+
+
+def add_seedance_2_5_draft_args(p):
+    add_seedance_2_5_args(p)
+    # 样片阶段仅支持 480p，不改变普通模式的参数。
+    next(action for action in p._actions if action.dest == "resolution").choices = ["480p"]
+
+
+def build_seedance_2_5_draft_body(args) -> dict:
+    body = build_seedance_2_5_body(args)
+    body["draft"] = True
+    return body
+
+
+def add_seedance_2_5_draft_complete_args(p):
+    p.add_argument("--draft-task-ids", nargs=1, required=True,
+                   help="One draft ID from data.draftTaskIds, using the same account within 14 days")
+
+
+def build_seedance_2_5_draft_complete_body(args) -> dict:
+    return {"model": "seedance-2.5", "resolution": "1080p", "draftTaskIds": args.draft_task_ids}
 
 
 # ---------------------------------------------------------------------------
@@ -351,11 +376,43 @@ def add_seedream_args(p):
                    help="Random seed for reproducible results (default: -1 for random)")
 
 
+def add_seedream_5_5_args(p):
+    p.add_argument("--prompt", required=True, help="Text prompt describing the image")
+    p.add_argument("--image", nargs="+", default=None,
+                   help="Reference image URLs or local paths (up to 10); API field: image")
+    p.add_argument("--size", default=None,
+                   help="Output size: 1K, 1.5K, 2K, or exact WIDTHxHEIGHT")
+    p.add_argument("--seed", type=int, default=None, help="Random seed")
+
+
+def build_seedream_5_5_body(args) -> dict:
+    body = {"model": "seedream-5.5", "prompt": args.prompt}
+    if args.image:
+        body["image"] = [resolve_local_file(img, quiet=args.quiet) for img in args.image]
+    if args.size is not None:
+        body["size"] = args.size
+    if args.seed is not None:
+        body["seed"] = args.seed
+    return body
+
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
 TOOLS = {
+    "seedream-5.5": {
+        "endpoint": SEEDREAM_5_5_PATH, "add_args": add_seedream_5_5_args,
+        "build_body": build_seedream_5_5_body, "help": "Seedream 5.5 text-to-image and image-to-image",
+    },
+    "seedance-2.5-draft": {
+        "endpoint": SEEDANCE_2_5_PATH, "add_args": add_seedance_2_5_draft_args,
+        "build_body": build_seedance_2_5_draft_body, "help": "Generate a 480p Seedance 2.5 draft",
+    },
+    "seedance-2.5-draft-complete": {
+        "endpoint": SEEDANCE_2_5_PATH, "add_args": add_seedance_2_5_draft_complete_args,
+        "build_body": build_seedance_2_5_draft_complete_body, "help": "Generate a 1080p final video from a draft",
+    },
     "seedance-2.5": {
         "endpoint": SEEDANCE_2_5_PATH,
         "add_args": add_seedance_2_5_args,
