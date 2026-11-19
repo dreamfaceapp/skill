@@ -58,7 +58,7 @@ Improved lip sync with vocal audio separation support.
 
 ### Billing Note
 
-When fps is "original": `(input FPS / 25) * 1` credit multiplier.
+When fps is "original", multiply the USD rate by `input FPS / 25`.
 
 ---
 
@@ -100,10 +100,10 @@ Motion-driven avatar — character from reference images performs motions from a
 
 ### Pricing
 
-| Resolution | Credits / Second |
+| Resolution | USD / Second |
 |------------|-----------------|
-| 480P       | 4.0             |
-| 720P       | 8.0             |
+| 480P       | $0.0300 |
+| 720P       | $0.0600 |
 
 ---
 

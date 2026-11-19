@@ -285,7 +285,7 @@ SEEDREAM_SIZE_HELP = (
     'Image size. Custom WIDTHxHEIGHT must satisfy total pixels AND aspect '
     'ratio [1/16, 16] at the same time (not each-edge minimum). '
     'seedream-5.0-pro: min 1280x720 (921,600 px), max 4,624,220 px; '
-    'tiers 1K/1.5K/2K only (no 3K/4K). Typical 1K/1.5K bill at 12 credits. '
+    'tiers 1K/1.5K/2K only (no 3K/4K). Typical 1K/1.5K cost $0.0900 per image. '
     'seedream-4.0: min 1280x720 (921,600 px); tiers 1K/2K/4K. '
     'seedream-5.0-lite / seedream-4.5: min 2560x1440 (3,686,400 px), no 1K; '
     'tiers 2K/3K/4K (Lite) or 2K/4K (4.5). '

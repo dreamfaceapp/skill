@@ -66,7 +66,7 @@ Generate a video directly from a text prompt. Output supports `480P` and `720P`,
 
 - **Endpoint:** `POST /api/async/dreamvideo_3.0/text_to_video`
 - **Command:** `python video_gen.py dreamvideo-text2video run --prompt "..."`
-- **Pricing:** `480P` = 2 credits/second, `720P` = 4 credits/second. If `--duration` is omitted, billing uses 5 seconds.
+- **Pricing:** `480P` = $0.0150/second, `720P` = $0.0300/second. If `--duration` is omitted, billing uses 5 seconds.
 
 ### Parameters
 
@@ -86,7 +86,7 @@ Generate a video from one or more images plus a prompt. One image is used as the
 
 - **Endpoint:** `POST /api/async/dreamvideo_3.0/image_to_video`
 - **Command:** `python video_gen.py dreamvideo-image2video run --images <url1> [url2] --prompt "..."`
-- **Pricing:** `480P` = 2 credits/second, `720P` = 4 credits/second. If `--duration` is omitted, billing uses 5 seconds.
+- **Pricing:** `480P` = $0.0150/second, `720P` = $0.0300/second. If `--duration` is omitted, billing uses 5 seconds.
 
 ### Parameters
 
