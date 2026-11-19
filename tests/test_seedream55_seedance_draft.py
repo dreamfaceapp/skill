@@ -30,6 +30,16 @@ class RequestContractTests(unittest.TestCase):
         self.assertNotIn('images', image)
         upload.assert_called_once()
 
+    def test_seedance25_4k_request_and_draft_restriction(self):
+        args = self.parse('seedance-2.5', ['--prompt', 'cat', '--resolution', '4k', '--duration', '4'])
+        body = byte_dance.TOOLS['seedance-2.5']['build_body'](args)
+        self.assertEqual(body['model'], 'seedance-2.5')
+        self.assertEqual(body['resolution'], '4k')
+        self.assertEqual(body['duration'], 4)
+        self.assertNotIn('draft', body)
+        with self.assertRaises(SystemExit):
+            self.parse('seedance-2.5-draft', ['--prompt', 'cat', '--resolution', '4k', '--duration', '4'])
+
     def test_draft_text_and_first_frame(self):
         tool = byte_dance.TOOLS['seedance-2.5-draft']
         self.assertEqual(tool['endpoint'], '/api/async/seedance_2.5')

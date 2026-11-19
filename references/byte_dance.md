@@ -9,14 +9,14 @@ Script: `scripts/byte_dance.py`
 Generate videos using the Seedance 2.5 model with support for text prompts, reference images, reference videos, and audio.
 
 - **Endpoint:** `POST /api/async/seedance_2.5`
-- **Command:** `python byte_dance.py seedance-2.5 run --prompt "..." --resolution <480p|720p|1080p> --duration <4-30> [--omni-reference-task-type <reference|edit|extend>] [options]`
+- **Command:** `python byte_dance.py seedance-2.5 run --prompt "..." --resolution <480p|720p|1080p|4k> --duration <4-30> [--omni-reference-task-type <reference|edit|extend>] [options]`
 
 ### Parameters
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `--prompt` | string | Yes | Video description (max 1500 chars) |
-| `--resolution` | string | Yes | Output resolution: "480p", "720p", or "1080p" |
+| `--resolution` | string | Yes | Output resolution: "480p", "720p", "1080p", or "4k" |
 | `--duration` | integer | Yes | Video duration in seconds (4-30). In `edit` mode this does not control output length; output follows the longest video in `--videos` |
 | `--images` | string | No | Reference image URLs or local paths (max 9) |
 | `--image-url` | string | No | First-frame image URL or local path (JPEG/PNG/WebP). Enables image-to-video mode |
@@ -30,7 +30,7 @@ Generate videos using the Seedance 2.5 model with support for text prompts, refe
 
 ### Tips
 
-- Seedance 2.5 supports 480p, 720p, and 1080p. It does not support 4k.
+- Seedance 2.5 supports 480p, 720p, 1080p, and 4k.
 - Video duration range is 4-30 seconds. When `--omni-reference-task-type edit`, output duration follows the longest input video in `--videos` instead of `--duration`.
 - Provide `--image-url` to generate from a first frame (image-to-video). Add `--end-image-url` for first-last frame transition. `--end-image-url` without `--image-url` returns error 10192.
 - The model does not support reference images or videos containing real human faces.
@@ -46,7 +46,6 @@ Generate videos using the Seedance 2.5 model with support for text prompts, refe
 | seedance-2.5 | 1080p | $1.1625 | $0.3900 |
 | seedance-2.5 | 4k | $1.8000 | $0.9000 |
 
-The API supports 4k pricing; the current CLI does not accept `4k` for Seedance 2.5.
 
 Reference To Video billing formula:
 
