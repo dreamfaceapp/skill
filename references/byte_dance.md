@@ -9,14 +9,14 @@ Script: `scripts/byte_dance.py`
 Generate videos using the Seedance 2.5 model with support for text prompts, reference images, reference videos, and audio.
 
 - **Endpoint:** `POST /api/async/seedance_2.5`
-- **Command:** `python byte_dance.py seedance-2.5 run --prompt "..." --resolution <480p|720p|1080p> --duration <4-30> [--omni-reference-task-type <reference|edit|extend>] [options]`
+- **Command:** `python byte_dance.py seedance-2.5 run --prompt "..." --resolution <480p|720p|1080p|4k> --duration <4-30> [--omni-reference-task-type <reference|edit|extend>] [options]`
 
 ### Parameters
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `--prompt` | string | Yes | Video description (max 1500 chars) |
-| `--resolution` | string | Yes | Output resolution: "480p", "720p", or "1080p" |
+| `--resolution` | string | Yes | Output resolution: "480p", "720p", "1080p", or "4k" |
 | `--duration` | integer | Yes | Video duration in seconds (4-30). In `edit` mode this does not control output length; output follows the longest video in `--videos` |
 | `--images` | string | No | Reference image URLs or local paths (max 9) |
 | `--image-url` | string | No | First-frame image URL or local path (JPEG/PNG/WebP). Enables image-to-video mode |
@@ -30,7 +30,7 @@ Generate videos using the Seedance 2.5 model with support for text prompts, refe
 
 ### Tips
 
-- Seedance 2.5 supports 480p, 720p, and 1080p. It does not support 4k.
+- Seedance 2.5 supports 480p, 720p, 1080p, and 4k.
 - Video duration range is 4-30 seconds. When `--omni-reference-task-type edit`, output duration follows the longest input video in `--videos` instead of `--duration`.
 - Provide `--image-url` to generate from a first frame (image-to-video). Add `--end-image-url` for first-last frame transition. `--end-image-url` without `--image-url` returns error 10192.
 - The model does not support reference images or videos containing real human faces.
@@ -39,17 +39,19 @@ Generate videos using the Seedance 2.5 model with support for text prompts, refe
 
 ### Model Pricing
 
-| Model Version | Resolution | Output Video Credits / Second | Reference Video Credits / Second |
+| Model Version | Resolution | Output Video USD / Second | Reference Video USD / Second |
 |---------------|------------|-------------------------------|----------------------------------|
-| seedance-2.5 | 480p | 27 | 9 |
-| seedance-2.5 | 720p | 60 | 21 |
-| seedance-2.5 | 1080p | 155 | 52 |
+| seedance-2.5 | 480p | $0.2025 | $0.0675 |
+| seedance-2.5 | 720p | $0.4500 | $0.1575 |
+| seedance-2.5 | 1080p | $1.1625 | $0.3900 |
+| seedance-2.5 | 4k | $1.8000 | $0.9000 |
+
 
 Reference To Video billing formula:
 
-`Credits = Output Video Credits × Duration (seconds) + Reference Video Credits × Total Reference Video Duration (seconds)`
+`USD amount = Output video USD rate × Duration (seconds) + Reference video USD rate × Total reference video duration (seconds)`
 
-The reference video duration is the sum of the durations of all reference videos in `--videos` (up to 10 videos, each 2-30 seconds, total max 30 seconds). Text/Image To Video are billed by output duration only. In `edit` mode, output duration follows the longest input video. `generateAudio` is not billed.
+The reference video duration is the sum of the durations of all reference videos in `--videos` (up to 10 videos, each 2-30 seconds, total max 30 seconds). The total USD amount is rounded up to four decimal places. Text/Image To Video are billed by output duration only. In `edit` mode, output duration follows the longest input video. `generateAudio` is not billed.
 
 ## Seedance 2.5 Draft
 
@@ -60,7 +62,7 @@ Generate a 480p draft, then optionally create a 1080p final video from the retur
 - Draft generation supports the same input flags as Seedance 2.5, including `--image-url`, `--end-image-url`, `--images`, `--videos`, and `--audios`. The request adds `draft: true`. Use `--json` to retain the top-level `draftTaskIds` array in CLI output (corresponding to `data.draftTaskIds` in the API response).
 - **Final:** `python scripts/byte_dance.py seedance-2.5-draft-complete run --draft-task-ids <draft-id> --json`
 - Use the single ID from the CLI JSON `draftTaskIds` array, not the submission `taskId`. The final request sends only `model`, `resolution: 1080p`, and `draftTaskIds`. Use the same account within 14 days; the final inherits the draft inputs and settings.
-- With no reference video, the documented rates are 27 credits/second for 480p draft and 155 credits/second for 1080p final; reference-video durations are billed separately for both stages. Verify current prices before use.
+- With no reference video, the documented rates are $0.2025/second for 480p draft and $1.1625/second for 1080p final; reference-video durations are billed separately for both stages. Verify current prices before use.
 
 ## Seedance 2.0
 
@@ -94,18 +96,18 @@ Generate videos using the Seedance 2.0 model with support for text prompts, refe
 
 ### Model Pricing
 
-| Model Version | Resolution | Output Video Credits / Second | Reference Video Credits / Second |
+| Model Version | Resolution | Output Video USD / Second | Reference Video USD / Second |
 |---------------|------------|-------------------------------|----------------------------------|
-| seedance-2.0 | 480p | 30 | 10 |
-| seedance-2.0 | 720p | 67 | 23 |
-| seedance-2.0 | 1080p | 165 | 55 |
-| seedance-2.0 | 4k | 340 | 114 |
-| seedance-2.0-fast | 480p | 18 | 7 |
-| seedance-2.0-fast | 720p | 40 | 13 |
+| seedance-2.0 | 480p | $0.1350 | $0.0450 |
+| seedance-2.0 | 720p | $0.3000 | $0.1050 |
+| seedance-2.0 | 1080p | $0.7500 | $0.2475 |
+| seedance-2.0 | 4k | $1.5375 | $0.5100 |
+| seedance-2.0-fast | 480p | $0.1125 | $0.0375 |
+| seedance-2.0-fast | 720p | $0.2400 | $0.0825 |
 
 Reference To Video billing formula:
 
-`Credits = Output Video Credits × Duration (seconds) + Reference Video Credits × Total Reference Video Duration (seconds)`
+`USD amount = Output video USD rate × Duration (seconds) + Reference video USD rate × Total reference video duration (seconds)`
 
 The reference video duration is the sum of the durations of all reference videos in `--videos` (max 3 videos, total max 15 seconds). Text/Image To Video are billed by output duration only. `generateAudio` is not billed.
 
@@ -140,14 +142,14 @@ Generate videos at the lowest cost using the Seedance 2.0 Mini model, ideal for 
 
 ### Model Pricing
 
-| Model Version | Resolution | Output Video Credits / Second | Reference Video Credits / Second |
+| Model Version | Resolution | Output Video USD / Second | Reference Video USD / Second |
 |---------------|------------|-------------------------------|----------------------------------|
-| seedance-2.0-mini | 480p | 6 | 2 |
-| seedance-2.0-mini | 720p | 13 | 4 |
+| seedance-2.0-mini | 480p | $0.0675 | $0.0225 |
+| seedance-2.0-mini | 720p | $0.1500 | $0.0525 |
 
 Reference To Video billing formula:
 
-`Credits = Output Video Credits × Duration (seconds) + Reference Video Credits × Total Reference Video Duration (seconds)`
+`USD amount = Output video USD rate × Duration (seconds) + Reference video USD rate × Total reference video duration (seconds)`
 
 The reference video duration is the sum of the durations of all reference videos in `--videos` (max 3 videos, total max 15 seconds). Text/Image To Video are billed by output duration only. `generateAudio` is not billed.
 
@@ -175,19 +177,19 @@ Generate high-quality images from text prompts using the Seedream model. Support
 - **Size floors differ by model.** 4.5 and 5.0 Lite do not accept 1K or any custom size below 3,686,400 total pixels. Do not copy Pro/4.0 sizes (`1280x720`, `1024x1024`, `1344x768`) onto Lite/4.5.
 - Custom `WIDTHxHEIGHT` is checked as width×height **and** aspect ratio `[1/16, 16]`. Example: `4097x256` (~16.004:1) fails even if total pixels are in range. `2048x2048` (1:1) and `2560x1440` (16:9) pass when the model's pixel floor is also met. Resolution keywords do not run this aspect check.
 - **seedream-5.0-pro keywords are `1K` / `1.5K` / `2K` only.** Do not send `3K` or `4K` on Pro. Pro custom sizes cannot exceed 4,624,220 total pixels.
-- Pro billing is by total pixels, not by keyword name: ≤ 2,360,000 (typical `1K` / `1.5K`) costs 12 credits; > 2,360,000 (`2K`) costs 24 credits. Other Seedream models have a flat per-image price.
+- Pro billing is by total pixels, not by keyword name: ≤ 2,360,000 (typical `1K` / `1.5K`) costs $0.0900; > 2,360,000 (`2K`) costs $0.1800. Other Seedream models have a flat per-image price.
 - Use `--seed` for reproducible results.
 - Supported image formats for reference images: jpeg, png, webp, bmp, tiff, gif, heic, heif. Max 30MB per image.
 
 ### Model Pricing
 
-| Model Version | Credits per Image |
+| Model Version | USD per Image |
 |---------------|------------------|
-| seedream-5.0-pro (1K / 1.5K, ≤ 2,360,000 pixels) | 12 |
-| seedream-5.0-pro (2K, > 2,360,000 pixels) | 24 |
-| seedream-5.0-lite | 9 |
-| seedream-4.5 | 10 |
-| seedream-4.0 | 8 |
+| seedream-5.0-pro (1K / 1.5K, ≤ 2,360,000 pixels) | $0.0900 |
+| seedream-5.0-pro (2K, > 2,360,000 pixels) | $0.1800 |
+| seedream-5.0-lite | $0.0675 |
+| seedream-4.5 | $0.0750 |
+| seedream-4.0 | $0.0600 |
 
 ## Seedream 5.5
 
@@ -196,4 +198,4 @@ Generate images from text or reference images using the independent `POST /api/a
 - Text: `python scripts/byte_dance.py seedream-5.5 run --prompt "A watercolor cat" --size 1K`
 - Image: `python scripts/byte_dance.py seedream-5.5 run --prompt "Make it watercolor" --image <image-url-or-local-path> --size 1K`
 - `--image` accepts up to 10 URLs or local paths and sends the `image` array. `--seed` is optional. `--size` accepts `1K`, `1.5K`, `2K`, or exact `WIDTHxHEIGHT`; verify additional pixel limits against the API.
-- Base output price is 5 credits for 1K/1.5K or at most 2,610,000 pixels, and 10 credits for 2K or more than 2,610,000 pixels; an omitted size is billed at 10 credits. Add 2 credits for each reference image.
+- Base output price is $0.0375 for 1K/1.5K or at most 2,610,000 pixels, and $0.0750 for 2K or more than 2,610,000 pixels; an omitted size is billed at $0.0750. Add $0.0150 for each reference image.

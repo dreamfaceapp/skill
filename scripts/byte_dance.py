@@ -2,7 +2,7 @@
 """DreamAPI ByteDance — Seedance 2.5/2.0 video generation and Seedream image generation.
 
 Subcommands:
-    seedance-2.5  Generate video with text/image/video/audio inputs (Seedance 2.5, 480p/720p/1080p)
+    seedance-2.5  Generate video with text/image/video/audio inputs (Seedance 2.5, 480p/720p/1080p/4k)
     seedance-2.5-draft  Generate a 480p draft
     seedance-2.5-draft-complete  Generate a 1080p final video from a draft ID
     seedance       Generate video with text/image/video/audio inputs (Seedance 2.0)
@@ -11,7 +11,7 @@ Subcommands:
     seedream-5.5   Generate or edit images with Seedream 5.5
 
 Usage:
-    python byte_dance.py seedance-2.5 run --prompt "..." --resolution <480p|720p|1080p> --duration <4-30> [--omni-reference-task-type <reference|edit|extend>] [--image-url <url>] [--end-image-url <url>] [options]
+    python byte_dance.py seedance-2.5 run --prompt "..." --resolution <480p|720p|1080p|4k> --duration <4-30> [--omni-reference-task-type <reference|edit|extend>] [--image-url <url>] [--end-image-url <url>] [options]
     python byte_dance.py seedance run --prompt "..." --resolution <480p|720p|1080p|4k> --duration <4-15> [--image-url <url>] [--end-image-url <url>] [options]
     python byte_dance.py seedance-mini run --prompt "..." --resolution <480p|720p> --duration <4-15> [--image-url <url>] [--end-image-url <url>] [options]
     python byte_dance.py seedream run --prompt "..." [options]
@@ -103,8 +103,8 @@ def build_seedance_2_5_body(args) -> dict:
 
 def add_seedance_2_5_args(p):
     p.add_argument("--prompt", required=True, help="Video description (max 1500 chars)")
-    p.add_argument("--resolution", required=True, choices=["480p", "720p", "1080p"],
-                   help="Output resolution (480p, 720p, or 1080p)")
+    p.add_argument("--resolution", required=True, choices=["480p", "720p", "1080p", "4k"],
+                   help="Output resolution (480p, 720p, 1080p, or 4k)")
     p.add_argument("--duration", required=True, type=int,
                    help="Video duration in seconds (4-30)")
     p.add_argument("--images", nargs="+", default=None,
@@ -285,7 +285,7 @@ SEEDREAM_SIZE_HELP = (
     'Image size. Custom WIDTHxHEIGHT must satisfy total pixels AND aspect '
     'ratio [1/16, 16] at the same time (not each-edge minimum). '
     'seedream-5.0-pro: min 1280x720 (921,600 px), max 4,624,220 px; '
-    'tiers 1K/1.5K/2K only (no 3K/4K). Typical 1K/1.5K bill at 12 credits. '
+    'tiers 1K/1.5K/2K only (no 3K/4K). Typical 1K/1.5K cost $0.0900 per image. '
     'seedream-4.0: min 1280x720 (921,600 px); tiers 1K/2K/4K. '
     'seedream-5.0-lite / seedream-4.5: min 2560x1440 (3,686,400 px), no 1K; '
     'tiers 2K/3K/4K (Lite) or 2K/4K (4.5). '
@@ -417,7 +417,7 @@ TOOLS = {
         "endpoint": SEEDANCE_2_5_PATH,
         "add_args": add_seedance_2_5_args,
         "build_body": build_seedance_2_5_body,
-        "help": "Generate video with text/image/video/audio inputs (Seedance 2.5, 480p/720p/1080p)",
+        "help": "Generate video with text/image/video/audio inputs (Seedance 2.5, 480p/720p/1080p/4k)",
     },
     "seedance": {
         "endpoint": SEEDANCE_PATH,

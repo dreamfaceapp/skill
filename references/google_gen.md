@@ -22,12 +22,12 @@ Generate images using the Gemini 3.1 Flash Image Preview model with support for 
 
 ### Pricing
 
-| Resolution | Credits |
+| Resolution | USD |
 |------------|--------|
-| 512 | 15 |
-| 1K | 20 |
-| 2K | 30 |
-| 4K | 40 |
+| 512 | $0.1125 |
+| 1K | $0.1500 |
+| 2K | $0.2250 |
+| 4K | $0.3000 |
 
 ### Tips
 
@@ -52,14 +52,14 @@ Generate premium, high-fidelity images using the Gemini 3 Pro Image Preview mode
 
 ### Pricing
 
-| Resolution | Credits |
+| Resolution | USD |
 |------------|--------|
-| 1K | 35 |
-| 2K | 35 |
+| 1K | $0.2625 |
+| 2K | $0.2625 |
 
 ### Tips
 
-- Both 1K and 2K cost the same credits (35). Use 2K for the best quality.
+- Both 1K and 2K cost $0.2625 per image. Use 2K for the best quality.
 - Reference images can be URLs or local file paths (auto-uploaded).
 
 ## Nano Banana Lite
@@ -83,8 +83,8 @@ The `model` request field is omitted; the API defaults to `gemini-3.1-flash-lite
 
 ### Pricing
 
-| Resolution | Credits per image |
+| Resolution | USD per image |
 |------------|-------------------|
-| 1K | 10 |
+| 1K | $0.0750 |
 
 Text-to-image and image-to-image use the same fixed price.

@@ -106,10 +106,10 @@ Automatically removes watermarks from videos using advanced AI algorithms while 
 
 ### Billing
 
-| FPS | Credits / Second |
+| FPS | USD / Second |
 |-----|------------------|
-| Up to 30 FPS | 1 credit |
-| Greater than 30 FPS | 2 credits |
+| Up to 30 FPS | $0.0075 |
+| Greater than 30 FPS | $0.0150 |
 
 ### Example
 
@@ -140,14 +140,14 @@ Upscale and improve video quality using advanced super-resolution algorithms. En
 
 ### Billing
 
-| Duration | Credits |
+| Duration | USD |
 |----------|---------|
-| 1 second | 5 credits |
-| 10 seconds | 50 credits |
-| 30 seconds | 150 credits |
-| 1 minute | 300 credits |
+| 1 second | $0.0375 |
+| 10 seconds | $0.3750 |
+| 30 seconds | $1.1250 |
+| 1 minute | $2.2500 |
 
-Pricing: **5 credits per second of video processed**.
+Pricing: **$0.0375 per second of video processed**.
 
 ### Example
 

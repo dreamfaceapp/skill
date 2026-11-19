@@ -27,38 +27,38 @@ Generate high-quality images from text prompts using OpenAI's gpt-image-2 model 
 ### Tips
 
 - Width and height must be multiples of 16
-- Lower quality generates faster results with fewer credits
+- Lower quality generates faster results at a lower cost
 - When `--images` are provided, the API performs image-to-image editing based on the reference images
 - Supported image formats for references: JPG, JPEG, PNG, WEBP, GIF
 - Use detailed prompts including subject, style, lighting, and composition for best results
 
 ### Pricing
 
-Credits = sizeBase × qualityMultiplier × n
+USD = sizeBase × qualityMultiplier × n
 
-| Factor | Dimension | Credit Multiplier |
+| Factor | Dimension | USD base / multiplier |
 | ------ | --------- | ----------------- |
-| Size Tier 1 | pixels ≤ 1,048,576 (≤ 1024²) | Base × 2 |
-| Size Tier 2 | 1,048,576 < pixels ≤ 4,194,304 (≤ 2048²) | Base × 4 |
-| Size Tier 3 | pixels > 4,194,304 | Base × 6 |
+| Size Tier 1 | pixels ≤ 1,048,576 (≤ 1024²) | $0.0150 |
+| Size Tier 2 | 1,048,576 < pixels ≤ 4,194,304 (≤ 2048²) | $0.0300 |
+| Size Tier 3 | pixels > 4,194,304 | $0.0450 |
 | Quality: low | — | × 1 |
 | Quality: medium | — | × 9 |
 | Quality: high | — | × 36 |
 | Image count (n) | — | × n |
 
-#### Credit Examples
+#### USD Examples
 
-| Model Version | Resolution | Credits per Image |
+| Model Version | Resolution | USD per Image |
 | ------------- | ---------- | ----------------- |
-| GPT-image-2 (low) | 1024×1024 | 2.0 |
-| GPT-image-2 (medium) | 1024×1024 | 18.0 |
-| GPT-image-2 (high) | 1024×1024 | 72.0 |
-| GPT-image-2 (low) | 2048×2048 | 4.0 |
-| GPT-image-2 (medium) | 2048×2048 | 36.0 |
-| GPT-image-2 (high) | 2048×2048 | 144.0 |
-| GPT-image-2 (low) | 2880×2880 | 6.0 |
-| GPT-image-2 (medium) | 2880×2880 | 54.0 |
-| GPT-image-2 (high) | 2880×2880 | 216.0 |
+| GPT-image-2 (low) | 1024×1024 | $0.0150 |
+| GPT-image-2 (medium) | 1024×1024 | $0.1350 |
+| GPT-image-2 (high) | 1024×1024 | $0.5400 |
+| GPT-image-2 (low) | 2048×2048 | $0.0300 |
+| GPT-image-2 (medium) | 2048×2048 | $0.2700 |
+| GPT-image-2 (high) | 2048×2048 | $1.0800 |
+| GPT-image-2 (low) | 2880×2880 | $0.0450 |
+| GPT-image-2 (medium) | 2880×2880 | $0.4050 |
+| GPT-image-2 (high) | 2880×2880 | $1.6200 |
 
 ## GPT Image 2.5 Flare Text To Image
 
@@ -126,13 +126,13 @@ Same as Flare image-to-image (`--images` required, JSON key `images`).
 
 ### Pricing (GPT Image 2.5)
 
-Credits = ceil(sizeBase × qualityMultiplier) × n
+USD = sizeBase × qualityMultiplier × n (rounded up to 4 decimal places)
 
-| Factor | Dimension | Credit Multiplier |
+| Factor | Dimension | USD base / multiplier |
 | ------ | --------- | ----------------- |
-| Size Tier 1 | pixels ≤ 1,048,576 (≤ 1024²) | Base 2 |
-| Size Tier 2 | 1,048,576 < pixels ≤ 4,194,304 (≤ 2048²) | Base 4 |
-| Size Tier 3 | pixels > 4,194,304 | Base 6 |
+| Size Tier 1 | pixels ≤ 1,048,576 (≤ 1024²) | $0.0150 |
+| Size Tier 2 | 1,048,576 < pixels ≤ 4,194,304 (≤ 2048²) | $0.0300 |
+| Size Tier 3 | pixels > 4,194,304 | $0.0450 |
 | Quality: low | — | × 1 |
 | Quality: medium | — | × 2.5 |
 | Quality: high | — | × 9 |
@@ -140,17 +140,17 @@ Credits = ceil(sizeBase × qualityMultiplier) × n
 | Quality: max | — | × 36 |
 | Image count (n) | — | × n |
 
-#### Credit Examples
+#### USD Examples
 
-| Model Version | Resolution | Quality | Credits per Image |
+| Model Version | Resolution | Quality | USD per Image |
 | ------------- | ---------- | ------- | ----------------- |
-| GPT Image 2.5 | 1024×1024 | low | 2 |
-| GPT Image 2.5 | 1024×1024 | medium | 5 |
-| GPT Image 2.5 | 1024×1024 | high | 18 |
-| GPT Image 2.5 | 1024×1024 | xhigh | 32 |
-| GPT Image 2.5 | 1024×1024 | max | 72 |
-| GPT Image 2.5 | 1536×1024 | high | 36 |
-| GPT Image 2.5 | 2048×2048 | low | 4 |
-| GPT Image 2.5 | 2048×2048 | high | 36 |
-| GPT Image 2.5 | 2880×2880 | low | 6 |
-| GPT Image 2.5 | 2880×2880 | max | 216 |
+| GPT Image 2.5 | 1024×1024 | low | $0.0150 |
+| GPT Image 2.5 | 1024×1024 | medium | $0.0375 |
+| GPT Image 2.5 | 1024×1024 | high | $0.1350 |
+| GPT Image 2.5 | 1024×1024 | xhigh | $0.2400 |
+| GPT Image 2.5 | 1024×1024 | max | $0.5400 |
+| GPT Image 2.5 | 1536×1024 | high | $0.2700 |
+| GPT Image 2.5 | 2048×2048 | low | $0.0300 |
+| GPT Image 2.5 | 2048×2048 | high | $0.2700 |
+| GPT Image 2.5 | 2880×2880 | low | $0.0450 |
+| GPT Image 2.5 | 2880×2880 | max | $1.6200 |

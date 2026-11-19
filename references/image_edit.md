@@ -90,7 +90,7 @@ Transfer clothing onto a model image. Supports upper garments, lower garments, a
 
 - **Endpoint:** `POST /api/async/tryon_clothes`
 - **Command:** `python image_edit.py try-on run --model <url|path> --upper <url|path> --lower <url|path>`
-- **Cost:** 8 credits per task
+- **Cost:** $0.0600 per task
 
 ### Parameters
 
