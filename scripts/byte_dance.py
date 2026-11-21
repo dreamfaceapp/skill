@@ -3,6 +3,7 @@
 
 Subcommands:
     seedance-2.5  Generate video with text/image/video/audio inputs (Seedance 2.5, 480p/720p/1080p/4k)
+    seedance-2.5-flash  Generate 480p or 720p video from text, frames, or references
     seedance-2.5-draft  Generate a 480p draft
     seedance-2.5-draft-complete  Generate a 1080p final video from a draft ID
     seedance       Generate video with text/image/video/audio inputs (Seedance 2.0)
@@ -28,6 +29,7 @@ from shared.client import DreamAPIClient
 from shared.upload import resolve_local_file
 
 SEEDANCE_2_5_PATH = "/api/async/seedance_2.5"
+SEEDANCE_2_5_FLASH_PATH = "/api/async/seedance_2.5_flash"
 SEEDANCE_PATH = "/api/async/seedance_2.0"
 SEEDREAM_PATH = "/api/async/seedream"
 SEEDREAM_5_5_PATH = "/api/async/seedream_5.5"
@@ -73,9 +75,9 @@ def print_result(data, args, client):
 # Seedance 2.5
 # ---------------------------------------------------------------------------
 
-def build_seedance_2_5_body(args) -> dict:
+def build_seedance_2_5_body(args, *, model="seedance-2.5") -> dict:
     body = {
-        "model": "seedance-2.5",
+        "model": model,
         "prompt": args.prompt,
         "resolution": args.resolution,
         "duration": args.duration,
@@ -101,32 +103,63 @@ def build_seedance_2_5_body(args) -> dict:
     return apply_seedance_frame_body(body, args)
 
 
-def add_seedance_2_5_args(p):
+def add_seedance_2_5_args(p, *, flash=False):
+    resolutions = ["480p", "720p"] if flash else ["480p", "720p", "1080p", "4k"]
     p.add_argument("--prompt", required=True, help="Video description (max 1500 chars)")
-    p.add_argument("--resolution", required=True, choices=["480p", "720p", "1080p", "4k"],
-                   help="Output resolution (480p, 720p, 1080p, or 4k)")
+    p.add_argument("--resolution", required=True, choices=resolutions,
+                   help=f"Output resolution ({', '.join(resolutions)})")
     p.add_argument("--duration", required=True, type=int,
                    help="Video duration in seconds (4-30)")
     p.add_argument("--images", nargs="+", default=None,
-                   help="Reference image URLs or local paths (max 9)")
+                   help=f"Reference image URLs or local paths (max {10 if flash else 9})")
     add_seedance_frame_args(p)
     p.add_argument("--videos", nargs="+", default=None,
-                   help="Reference video URLs or local paths (max 10, each 2-30s, total max 30s)")
+                   help=f"Reference video URLs or local paths (max {5 if flash else 10}, each 2-30s, total max 30s)")
     p.add_argument("--audios", nargs="+", default=None,
-                   help="Audio URLs or local paths (max 3)")
+                   help=f"Audio URLs or local paths (max {5 if flash else 3})")
     p.add_argument("--ratio", default="adaptive",
                    help="Aspect ratio (default: adaptive)")
     p.add_argument("--seed", type=int, default=None,
                    help="Random seed for reproducible results")
-    p.add_argument("--generate-audio", action="store_true",
-                   help="Generate audio for the video")
     p.add_argument(
-        "--omni-reference-task-type",
-        default=None,
-        choices=["reference", "edit", "extend"],
-        dest="omni_reference_task_type",
-        help="Task type when using --videos: reference, edit, or extend. Omit for default reference.",
+        "--generate-audio",
+        action=argparse.BooleanOptionalAction if flash else "store_true",
+        help="Generate audio for the video",
     )
+    if flash:
+        p.set_defaults(omni_reference_task_type=None)
+    else:
+        p.add_argument(
+            "--omni-reference-task-type",
+            default=None,
+            choices=["reference", "edit", "extend"],
+            dest="omni_reference_task_type",
+            help="Task type when using --videos: reference, edit, or extend. Omit for default reference.",
+        )
+
+
+def add_seedance_2_5_flash_args(p):
+    add_seedance_2_5_args(p, flash=True)
+
+
+def build_seedance_2_5_flash_body(args) -> dict:
+    if not 4 <= args.duration <= 30:
+        raise ValueError("--duration must be between 4 and 30 seconds")
+    if args.end_image_url and not args.image_url:
+        raise ValueError("--end-image-url requires --image-url")
+    if args.image_url and (args.images or args.videos or args.audios):
+        raise ValueError("--image-url cannot be combined with --images, --videos, or --audios")
+    for flag, refs, limit in (("--images", args.images, 10), ("--videos", args.videos, 5),
+                              ("--audios", args.audios, 5)):
+        if refs and len(refs) > limit:
+            raise ValueError(f"{flag} accepts at most {limit} references")
+
+    body = build_seedance_2_5_body(args, model="seedance-2.5-flash")
+    if args.image_url:
+        body["ratio"] = "adaptive"
+    if args.generate_audio is False:
+        body["generateAudio"] = False
+    return body
 
 
 def add_seedance_2_5_draft_args(p):
@@ -404,6 +437,10 @@ TOOLS = {
     "seedream-5.5": {
         "endpoint": SEEDREAM_5_5_PATH, "add_args": add_seedream_5_5_args,
         "build_body": build_seedream_5_5_body, "help": "Seedream 5.5 text-to-image and image-to-image",
+    },
+    "seedance-2.5-flash": {
+        "endpoint": SEEDANCE_2_5_FLASH_PATH, "add_args": add_seedance_2_5_flash_args,
+        "build_body": build_seedance_2_5_flash_body, "help": "Seedance 2.5 Flash video generation (480p/720p)",
     },
     "seedance-2.5-draft": {
         "endpoint": SEEDANCE_2_5_PATH, "add_args": add_seedance_2_5_draft_args,

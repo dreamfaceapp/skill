@@ -1,6 +1,6 @@
 ---
 name: dreamapi-skill
-description: "43 AI-powered tools for video generation, talking avatars, image editing, voice cloning, Google Gemini image generation, virtual try-on, OpenAI GPT image, and more — powered by DreamAPI. Describe what you want and the agent handles the rest."
+description: "44 AI-powered tools for video generation, talking avatars, image editing, voice cloning, Google Gemini image generation, virtual try-on, OpenAI GPT image, and more — powered by DreamAPI. Describe what you want and the agent handles the rest."
 compatibility: Requires Python 3.10+
 metadata:
   tags: dreamapi, avatar, lipsync, video, image, voice, tts, flux, wan2.1, ai, api, text2image, image2video, face-swap, remove-bg, video-translate, voice-clone, google-gemini, image-gen, try-on, openai, gpt-image, seedream, dreamvideo
@@ -10,7 +10,7 @@ metadata:
 
 # DreamAPI Skill
 
-> 43 AI tools powered by [DreamAPI](https://api.newportai.com/) — from Newport AI.
+> 44 AI tools powered by [DreamAPI](https://api.newportai.com/) — from Newport AI.
 
 ## Execution Rule
 
@@ -127,7 +127,7 @@ Decision tree:
 | Video Gen | `scripts/video_gen.py` | [video_gen.md](references/video_gen.md) | Wan2.1 Text/Image/Head-Tail, DreamVideo 3.0 Text/Image |
 | Video Edit | `scripts/video_edit.py` | [video_edit.md](references/video_edit.md) | Swap Face Video, Video Matting, Composite, Watermark Remover, Video Enhance |
 | Video Translate | `scripts/video_translate.py` | [video_translate.md](references/video_translate.md) | Video Translate 2.0 (en/zh/es) |
-| ByteDance | `scripts/byte_dance.py` | [byte_dance.md](references/byte_dance.md) | Seedance 2.5, Seedance 2.5 Draft, Seedance 2.5 Draft Complete, Seedance 2.0, Seedance 2.0 Mini, Seedream, Seedream 5.5 |
+| ByteDance | `scripts/byte_dance.py` | [byte_dance.md](references/byte_dance.md) | Seedance 2.5, Seedance 2.5 Flash, Seedance 2.5 Draft, Seedance 2.5 Draft Complete, Seedance 2.0, Seedance 2.0 Mini, Seedream, Seedream 5.5 |
 | Google | `scripts/google_gen.py` | [google_gen.md](references/google_gen.md) | Nano Banana 2, Nano Banana Pro, Nano Banana Lite (text-to-image and image-to-image) |
 | OpenAI | `scripts/open_ai.py` | [open_ai.md](references/open_ai.md) | GPT Image 2, GPT Image 2.5 Flare/Sunburst text-to-image and image-to-image |
 | Voice | `scripts/voice.py` | [voice.md](references/voice.md) | Voice Clone, TTS Clone, TTS Common, TTS Pro, Voice List |
@@ -193,6 +193,7 @@ What does the user need?
 │  └─ Seedance first-last frame → byte_dance.py seedance / seedance-2.5 --image-url --end-image-url
 │
 ├─ Generate video with multi-modal inputs (text + images + video + audio)?
+│  ├─ Flash (480p/720p) → byte_dance.py seedance-2.5-flash
 │  ├─ Draft then 1080p final → byte_dance.py seedance-2.5-draft, then seedance-2.5-draft-complete
 │  ├─ Latest model (480p/720p/1080p) → byte_dance.py seedance-2.5
 │  └─ Seedance 2.0 (480p-4k) → byte_dance.py seedance
@@ -231,6 +232,7 @@ What does the user need?
 | "Make this character do the dance in this video" | `avatar.py dreamact run` |
 | "Generate an image of..." | `image_gen.py text2image run` |
 | "Generate or edit an image with Seedream 5.5" | `byte_dance.py seedream-5.5 run --prompt "..." [--image <url>]` |
+| "Generate a 480p or 720p video with Seedance 2.5 Flash" | `byte_dance.py seedance-2.5-flash run` |
 | "Generate a Seedance 2.5 draft, then a final video" | `byte_dance.py seedance-2.5-draft run ... --json`, then `seedance-2.5-draft-complete run --draft-task-ids <draft-id>` |
 | "Generate a premium image from text" | `byte_dance.py seedream run --model seedream-5.0-pro` (`--size` `1K`/`1.5K`/`2K` only) |
 | "Modify this image to..." | `image_gen.py image2image run` |
@@ -303,9 +305,9 @@ See [references/error_handling.md](references/error_handling.md) for error codes
 | Video Editing | Swap Face Video, Video Matting, Composite, Watermark Remover, Video Enhance | 5 |
 | Video Translate | Video Translate 2.0 | 1 |
 | Voice | Voice Clone, TTS Clone, TTS Common, TTS Pro, Voice List | 5 |
-| ByteDance | Seedance 2.5, Seedance 2.5 Draft, Seedance 2.5 Draft Complete, Seedance 2.0, Seedance 2.0 Mini, Seedream, Seedream 5.5 | 7 |
+| ByteDance | Seedance 2.5, Seedance 2.5 Flash, Seedance 2.5 Draft, Seedance 2.5 Draft Complete, Seedance 2.0, Seedance 2.0 Mini, Seedream, Seedream 5.5 | 8 |
 | Google | Nano Banana 2, Nano Banana Pro, Nano Banana Lite | 3 |
 | OpenAI | GPT Image 2, GPT Image 2.5 Flare T2I/I2I, GPT Image 2.5 Sunburst T2I/I2I | 5 |
-| **Total** | | **43** |
+| **Total** | | **44** |
 
 > **Never promise capabilities that don't exist as modules.**

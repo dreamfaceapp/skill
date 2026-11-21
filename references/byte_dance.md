@@ -53,6 +53,31 @@ Reference To Video billing formula:
 
 The reference video duration is the sum of the durations of all reference videos in `--videos` (up to 10 videos, each 2-30 seconds, total max 30 seconds). The total USD amount is rounded up to four decimal places. Text/Image To Video are billed by output duration only. In `edit` mode, output duration follows the longest input video. `generateAudio` is not billed.
 
+## Seedance 2.5 Flash
+
+Generate videos from text, a first frame with an optional last frame, or image, video, and audio references.
+
+- **Endpoint** `POST /api/async/seedance_2.5_flash`
+- **Model** `seedance-2.5-flash`
+- **Resolution and duration** 480p or 720p, 4–30 integer seconds.
+- **Frames** Use `--image-url` for the first frame and optionally `--end-image-url` for the last frame. The output follows the first-frame aspect ratio. Frame inputs cannot be combined with reference lists.
+- **References** Use up to 10 images, 5 videos, and 5 audio clips with `--images`, `--videos`, and `--audios`. Each reference video must be 2–30 seconds, with no more than 30 reference video seconds in total. URL and local file inputs retain their order.
+- **Audio** Use `--generate-audio` or `--no-generate-audio`.
+- **Actions** Use `run` to submit and poll, `submit` to get a task ID, or `query --task-id <id>` to poll an existing task.
+
+```bash
+python scripts/byte_dance.py seedance-2.5-flash run --prompt "Rain falls on a quiet street" --resolution 480p --duration 5
+python scripts/byte_dance.py seedance-2.5-flash run --prompt "The camera moves forward" --resolution 720p --duration 5 --image-url first.png
+python scripts/byte_dance.py seedance-2.5-flash run --prompt "Follow the reference motion" --resolution 720p --duration 5 --images character.png --videos motion.mp4
+```
+
+| Resolution | Output USD per second | Reference video USD per second |
+| --- | ---: | ---: |
+| 480p | $0.1350 | $0.0900 |
+| 720p | $0.3075 | $0.2025 |
+
+The total is the output charge plus the reference video charge, rounded up to four decimal places. The reference video charge uses the combined duration of videos passed via `--videos`.
+
 ## Seedance 2.5 Draft
 
 Generate a 480p draft, then optionally create a 1080p final video from the returned draft ID. Each stage is billed separately.
