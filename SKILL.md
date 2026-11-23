@@ -153,8 +153,7 @@ What does the user need?
 │  ├─ Seedream 5.5 → byte_dance.py seedream-5.5
 │  ├─ Using Seedream → byte_dance.py seedream
 │  │  ├─ Premium → --model seedream-5.0-pro
-│  │  ├─ Budget → --model seedream-5.0-lite
-│  │  └─ Standard → --model seedream-4.5 or seedream-4.0
+│  │  └─ Standard → --model seedream-4.0
 │  ├─ Using Google Gemini Nano Banana 2 / Pro → google_gen.py nano-banana-2 or nano-banana-pro
 │  ├─ Budget 1K generation → google_gen.py nano-banana-lite (omit --images)
 │  ├─ Using OpenAI GPT Image 2 → open_ai.py gpt-image

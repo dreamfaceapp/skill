@@ -256,23 +256,12 @@ def add_seedance_mini_args(p):
 # Seedream
 # ---------------------------------------------------------------------------
 
-# Total-pixel floors are width*height, not each edge. 2048x2048 is valid for
-# Lite/4.5; 1920x1080 is not. Tiers and ranges follow Ark 图片生成 API.
+# 尺寸下限按宽乘高的总像素计算。
 SEEDREAM_SIZE_LIMITS = {
     "seedream-5.0-pro": {
         "min_pixels": 921600,
         "max_pixels": 4624220,
         "tiers": frozenset({"1K", "1.5K", "2K"}),
-    },
-    "seedream-5.0-lite": {
-        "min_pixels": 3686400,
-        "max_pixels": 16777216,
-        "tiers": frozenset({"2K", "3K", "4K"}),
-    },
-    "seedream-4.5": {
-        "min_pixels": 3686400,
-        "max_pixels": 16777216,
-        "tiers": frozenset({"2K", "4K"}),
     },
     "seedream-4.0": {
         "min_pixels": 921600,
@@ -286,10 +275,7 @@ SEEDREAM_SIZE_HELP = (
     'ratio [1/16, 16] at the same time (not each-edge minimum). '
     'seedream-5.0-pro: min 1280x720 (921,600 px), max 4,624,220 px; '
     'tiers 1K/1.5K/2K only (no 3K/4K). Typical 1K/1.5K cost $0.0900 per image. '
-    'seedream-4.0: min 1280x720 (921,600 px); tiers 1K/2K/4K. '
-    'seedream-5.0-lite / seedream-4.5: min 2560x1440 (3,686,400 px), no 1K; '
-    'tiers 2K/3K/4K (Lite) or 2K/4K (4.5). '
-    'Do not use 1024x1024 or 1920x1080 on Lite/4.5.'
+    'seedream-4.0: min 1280x720 (921,600 px); tiers 1K/2K/4K.'
 )
 
 
@@ -365,7 +351,7 @@ def build_seedream_body(args) -> dict:
 
 def add_seedream_args(p):
     p.add_argument("--model", default="seedream-5.0-pro",
-                   choices=["seedream-5.0-pro", "seedream-5.0-lite", "seedream-4.5", "seedream-4.0"],
+                   choices=tuple(SEEDREAM_SIZE_LIMITS),
                    help="Model version (default: seedream-5.0-pro)")
     p.add_argument("--prompt", required=True,
                    help="Text prompt describing the image content to generate. Supports Chinese and English.")
