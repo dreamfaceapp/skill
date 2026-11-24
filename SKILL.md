@@ -1,6 +1,6 @@
 ---
 name: dreamapi-skill
-description: "47 AI-powered tools for video generation, talking avatars, image editing, voice cloning, Google Gemini image generation, virtual try-on, OpenAI GPT image, and more — powered by DreamAPI. Describe what you want and the agent handles the rest."
+description: "48 AI-powered tools for video generation, talking avatars, image editing, voice cloning, Google Gemini image generation, virtual try-on, OpenAI GPT image, and more — powered by DreamAPI. Describe what you want and the agent handles the rest."
 compatibility: Requires Python 3.10+
 metadata:
   tags: dreamapi, avatar, lipsync, video, image, voice, tts, flux, wan2.1, ai, api, text2image, image2video, face-swap, remove-bg, video-translate, voice-clone, google-gemini, image-gen, try-on, openai, gpt-image, seedream, dreamvideo
@@ -10,7 +10,7 @@ metadata:
 
 # DreamAPI Skill
 
-> 47 AI tools powered by [DreamAPI](https://api.newportai.com/) — from Newport AI.
+> 48 AI tools powered by [DreamAPI](https://api.newportai.com/) — from Newport AI.
 
 ## Execution Rule
 
@@ -124,7 +124,7 @@ Decision tree:
 | Avatar | `scripts/avatar.py` | [avatar.md](references/avatar.md) | LipSync, LipSync 2.0, DreamAvatar 3.0 Fast, Dreamact |
 | Image Gen | `scripts/image_gen.py` | [image_gen.md](references/image_gen.md) | Flux Text-to-Image, Flux Image-to-Image |
 | Image Edit | `scripts/image_edit.py` | [image_edit.md](references/image_edit.md) | Colorize, Enhance, Outpainting, Swap Face, Remove BG, Virtual Try-On |
-| Video Gen | `scripts/video_gen.py` | [video_gen.md](references/video_gen.md) | Wan2.1 Text/Image/Head-Tail, DreamVideo 3.0 Text/Image |
+| Video Gen | `scripts/video_gen.py` | [video_gen.md](references/video_gen.md) | Wan2.1 Text/Image/Head-Tail, DreamVideo 3.0 Text/Image/Reference |
 | Video Edit | `scripts/video_edit.py` | [video_edit.md](references/video_edit.md) | Swap Face Video, Video Matting, Composite, Watermark Remover, Video Enhance |
 | Video Translate | `scripts/video_translate.py` | [video_translate.md](references/video_translate.md) | Video Translate 2.0 (en/zh/es) |
 | ByteDance | `scripts/byte_dance.py` | [byte_dance.md](references/byte_dance.md) | Seedance 2.5, Seedance 2.5 Draft, Seedance 2.5 Draft Complete, Seedance 2.0, Seedance 2.0 Mini, Seedream, Seedream 5.5 |
@@ -187,6 +187,7 @@ What does the user need?
 │
 ├─ Animate an image into video?
 │  ├─ DreamVideo 3.0 (1 image = i2v) → video_gen.py dreamvideo-image2video --images
+│  ├─ DreamVideo 3.0 reference-guided video → video_gen.py dreamvideo-3.0-reference-to-video
 │  ├─ Wan2.1 → video_gen.py image2video
 │  └─ Seedance first frame → byte_dance.py seedance / seedance-2.5 --image-url
 │
@@ -244,6 +245,7 @@ What does the user need?
 | "Remove the background" | `image_edit.py remove-bg run` |
 | "Try on clothes virtually" | `image_edit.py try-on run` |
 | "Generate a video about..." | `video_gen.py dreamvideo-text2video run` or `video_gen.py text2video run` |
+| "Generate a video guided by reference media" | `video_gen.py dreamvideo-3.0-reference-to-video run --images ... --videos ... --audios ...` |
 | "Animate this image into a video" | `video_gen.py dreamvideo-image2video run --images` or `video_gen.py image2video run` or `byte_dance.py seedance run --image-url` |
 | "Create a transition between these two images" | `video_gen.py dreamvideo-image2video run --images <first> <last>` or `video_gen.py head-tail run` or `byte_dance.py seedance run --image-url --end-image-url` |
 | "Generate video with text, images, video or audio inputs" | `byte_dance.py seedance-2.5 run` or `byte_dance.py seedance run` |
@@ -306,13 +308,13 @@ See [references/error_handling.md](references/error_handling.md) for error codes
 | Avatar | LipSync, LipSync 2.0, DreamAvatar 3.0 Fast, Dreamact | 4 |
 | Image Generation | Flux Text-to-Image, Flux Image-to-Image | 2 |
 | Image Editing | Colorize, Enhance, Outpainting, Swap Face, Remove BG, Virtual Try-On | 6 |
-| Video Generation | Wan2.1 Text/Image/Head-Tail, DreamVideo 3.0 Text/Image | 5 |
+| Video Generation | Wan2.1 Text/Image/Head-Tail, DreamVideo 3.0 Text/Image/Reference | 6 |
 | Video Editing | Swap Face Video, Video Matting, Composite, Watermark Remover, Video Enhance | 5 |
 | Video Translate | Video Translate 2.0 | 1 |
 | Voice | Voice Clone, TTS Clone, TTS Common, TTS Pro, Voice List | 5 |
 | ByteDance | Seedance 2.5, Seedance 2.5 Draft, Seedance 2.5 Draft Complete, Seedance 2.0, Seedance 2.0 Mini, Seedream, Seedream 5.5 | 7 |
 | Google | Nano Banana 2, Nano Banana Pro, Nano Banana Lite | 3 |
 | OpenAI | GPT Image 2 and GPT Image 2.5/2.6 Flare and Sunburst T2I/I2I | 9 |
-| **Total** | | **47** |
+| **Total** | | **48** |
 
 > **Never promise capabilities that don't exist as modules.**

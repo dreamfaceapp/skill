@@ -103,3 +103,21 @@ Generate a video from one or more images plus a prompt. One image is used as the
 
 - Each input image must satisfy **longer side / shorter side ≤ 4:1** (4:1 and 1:4 are allowed; 5:1 and 1:5 are not). There is no maximum pixel length on the longer side.
 - If the ratio exceeds 4:1, submit may still succeed; polling then returns `status=4` with `errorCode=10192`.
+
+
+## DreamVideo 3.0 Reference to Video
+
+Use `dreamvideo-3.0-reference-to-video` to generate video guided by reference images or videos, with optional reference audio.
+
+- Endpoint `/api/async/dreamvideo_3.0/reference_to_video`.
+- Supply `--prompt` and at least one item in `--images` or `--videos`. Media can be public URLs or local paths.
+- Use up to 9 images, 3 videos, or 3 audio references, with no more than 12 items in total. `--audios` supplements the visual references.
+- Use `--no-enable-video-audio` to exclude original sound from reference videos. `--enable-video-audio` enables it explicitly. Omit both to use the server default of enabled.
+- Optional `--duration` accepts 1–15 seconds and defaults to 5. `--resolution` accepts `480P` or `720P` and defaults to `480P`. `--aspect-ratio` accepts `auto`, `9:16`, `3:4`, `1:1`, `4:3`, `16:9`, and `21:9`, with `auto` as the default. `--seed` accepts a positive integer or `-1` for random generation.
+
+```bash
+python scripts/video_gen.py dreamvideo-3.0-reference-to-video run --prompt "Animate the reference scene" --images ./scene.png
+python scripts/video_gen.py dreamvideo-3.0-reference-to-video run --prompt "Follow the reference motion" --videos ./clip.mp4 --audios ./track.wav --no-enable-video-audio
+```
+
+Use `submit` to return a task ID immediately or `query --task-id <id>` to check an existing task.

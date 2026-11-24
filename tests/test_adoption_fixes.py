@@ -38,10 +38,10 @@ class Item1ReadmeInstall(unittest.TestCase):
 
 
 class Item2GithubDescription(unittest.TestCase):
-    def test_readme_tool_count_is_47(self):
+    def test_readme_tool_count_is_48(self):
         text = (ROOT / "README.md").read_text()
-        self.assertIn("47 AI-powered tools", text)
-        self.assertIn("## Available Tools (47)", text)
+        self.assertIn("48 AI-powered tools", text)
+        self.assertIn("## Available Tools (48)", text)
 
 
 class Item3SeedanceMediaUpload(unittest.TestCase):
