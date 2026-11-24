@@ -56,6 +56,7 @@ class Item3SeedanceMediaUpload(unittest.TestCase):
             ratio="adaptive",
             seed=None,
             generate_audio=False,
+            omni_reference_task_type=None,
             image_url=None,
             end_image_url=None,
             quiet=True,
