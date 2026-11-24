@@ -31,6 +31,7 @@ IMAGE2VIDEO_PATH = "/api/async/wan/image_to_video/2.1"
 HEADTAIL_PATH = "/api/async/wan/head_tail_to_video/2.1"
 DREAMVIDEO_T2V_PATH = "/api/async/dreamvideo_3.0/text_to_video"
 DREAMVIDEO_I2V_PATH = "/api/async/dreamvideo_3.0/image_to_video"
+DREAMVIDEO_REF2V_PATH = "/api/async/dreamvideo_3.0/reference_to_video"
 
 DREAMVIDEO_RESOLUTIONS = ["480P", "720P"]
 DREAMVIDEO_ASPECT_RATIOS = ["auto", "9:16", "3:4", "1:1", "4:3", "16:9"]
@@ -117,20 +118,20 @@ def add_headtail_args(p):
 # DreamVideo 3.0 shared optional params
 # ---------------------------------------------------------------------------
 
-def parse_dreamvideo_duration(value: str) -> int:
+def parse_dreamvideo_duration(value: str, minimum: int = 3) -> int:
     try:
         duration = int(value)
     except ValueError as exc:
         raise argparse.ArgumentTypeError("duration must be an integer") from exc
-    if duration < 3 or duration > 15:
-        raise argparse.ArgumentTypeError("duration must be between 3 and 15")
+    if duration < minimum or duration > 15:
+        raise argparse.ArgumentTypeError(f"duration must be between {minimum} and 15")
     return duration
 
 
-def apply_dreamvideo_optional(body, args):
+def apply_dreamvideo_optional(body, args, minimum_duration=3):
     if args.duration is not None:
-        if args.duration < 3 or args.duration > 15:
-            raise ValueError("DreamVideo duration must be between 3 and 15")
+        if args.duration < minimum_duration or args.duration > 15:
+            raise ValueError(f"DreamVideo duration must be between {minimum_duration} and 15")
         body["duration"] = args.duration
     if args.resolution is not None:
         body["resolution"] = args.resolution
@@ -140,16 +141,17 @@ def apply_dreamvideo_optional(body, args):
         body["seed"] = args.seed
 
 
-def add_dreamvideo_optional_args(p):
-    p.add_argument("--duration", type=parse_dreamvideo_duration, default=None,
-                   help="Duration in seconds, 3-15. Omit to use the server default (5).")
+def add_dreamvideo_optional_args(p, *, reference=False):
+    minimum = 1 if reference else 3
+    ratios = [*DREAMVIDEO_ASPECT_RATIOS, "21:9"] if reference else DREAMVIDEO_ASPECT_RATIOS
+    p.add_argument("--duration", type=lambda value: parse_dreamvideo_duration(value, minimum),
+                   default=None, help=f"Duration in seconds, {minimum}-15. Omit to use the server default (5).")
     p.add_argument("--resolution", choices=DREAMVIDEO_RESOLUTIONS, default=None,
                    help="Output resolution: 480P or 720P. Omit to use the server default.")
-    p.add_argument("--aspect-ratio", choices=DREAMVIDEO_ASPECT_RATIOS, default=None,
-                   dest="aspect_ratio",
-                   help="Aspect ratio (default: auto)")
+    p.add_argument("--aspect-ratio", choices=ratios, default=None,
+                   dest="aspect_ratio", help="Aspect ratio (default: auto)")
     p.add_argument("--seed", type=int, default=None,
-                   help="Generation seed (default: 42)")
+                   help="Generation seed (default: -1 for random)" if reference else "Generation seed (default: 42)")
 
 
 # ---------------------------------------------------------------------------
@@ -191,6 +193,46 @@ def add_dreamvideo_image2video_args(p):
 
 
 # ---------------------------------------------------------------------------
+# DreamVideo 3.0 Reference to Video
+# ---------------------------------------------------------------------------
+
+DREAMVIDEO_REFERENCE_LIMITS = {"images": 9, "videos": 3, "audios": 3}
+
+
+def add_dreamvideo_reference_args(p):
+    p.add_argument("--prompt", required=True, help="Video description")
+    for field, limit in DREAMVIDEO_REFERENCE_LIMITS.items():
+        p.add_argument(f"--{field}", nargs="+", default=[],
+                       help=f"Reference {field} as URLs or local paths (up to {limit})")
+    p.add_argument("--enable-video-audio", action=argparse.BooleanOptionalAction,
+                   default=None, help="Use original reference video sound (server default: enabled)")
+    add_dreamvideo_optional_args(p, reference=True)
+
+
+def validate_dreamvideo_references(args, parser):
+    if not args.images and not args.videos:
+        parser.error("provide at least one reference image or video")
+    counts = {field: len(getattr(args, field)) for field in DREAMVIDEO_REFERENCE_LIMITS}
+    for field, limit in DREAMVIDEO_REFERENCE_LIMITS.items():
+        if counts[field] > limit:
+            parser.error(f"provide at most {limit} reference {field}")
+    if sum(counts.values()) > 12:
+        parser.error("provide at most 12 references in total")
+
+
+def build_dreamvideo_reference_body(args) -> dict:
+    body = {"prompt": args.prompt}
+    apply_dreamvideo_optional(body, args, minimum_duration=1)
+    for field in DREAMVIDEO_REFERENCE_LIMITS:
+        values = getattr(args, field)
+        if values:
+            body[field] = [resolve_local_file(value, quiet=args.quiet) for value in values]
+    if args.enable_video_audio is not None:
+        body["enableVideoAudio"] = args.enable_video_audio
+    return body
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -225,6 +267,13 @@ TOOLS = {
         "build_body": build_dreamvideo_image2video_body,
         "help": "Generate video from images (DreamVideo 3.0)",
     },
+    "dreamvideo-3.0-reference-to-video": {
+        "endpoint": DREAMVIDEO_REF2V_PATH,
+        "add_args": add_dreamvideo_reference_args,
+        "validate_args": validate_dreamvideo_references,
+        "build_body": build_dreamvideo_reference_body,
+        "help": "Generate video with reference images or videos and optional audio (DreamVideo 3.0)",
+    },
 }
 
 
@@ -256,8 +305,10 @@ def main():
         add_output_args(p_query)
 
     args = parser.parse_args()
-    client = DreamAPIClient()
     tool_info = TOOLS[args.tool]
+    if args.action in ("run", "submit") and "validate_args" in tool_info:
+        tool_info["validate_args"](args, parser)
+    client = DreamAPIClient()
 
     if args.action == "run":
         body = tool_info["build_body"](args)
