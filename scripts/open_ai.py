@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""DreamAPI OpenAI — GPT Image 2 and GPT Image 2.5 image generation.
+"""DreamAPI OpenAI — GPT Image 2, 2.5, and 2.6 image generation.
 
 Subcommands:
     gpt-image                              GPT Image 2 (text-to-image or image-to-image)
@@ -7,6 +7,10 @@ Subcommands:
     gpt-image-2.5-flare-image-to-image     GPT Image 2.5 Flare image-to-image
     gpt-image-2.5-sunburst-text-to-image   GPT Image 2.5 Sunburst text-to-image
     gpt-image-2.5-sunburst-image-to-image  GPT Image 2.5 Sunburst image-to-image
+    gpt-image-2.6-flare-text-to-image  GPT Image 2.6 Flare text-to-image
+    gpt-image-2.6-flare-image-to-image  GPT Image 2.6 Flare image-to-image
+    gpt-image-2.6-sunburst-text-to-image  GPT Image 2.6 Sunburst text-to-image
+    gpt-image-2.6-sunburst-image-to-image  GPT Image 2.6 Sunburst image-to-image
 
 Usage:
     python open_ai.py gpt-image run --prompt "..." [--width 1024] [--height 1024] [--quality low] [--n 1] [--images <urls>]
@@ -29,6 +33,10 @@ GPT_IMAGE_25_FLARE_T2I_PATH = "/api/async/gpt_image_2.5/flare/text_to_image"
 GPT_IMAGE_25_FLARE_I2I_PATH = "/api/async/gpt_image_2.5/flare/image_to_image"
 GPT_IMAGE_25_SUNBURST_T2I_PATH = "/api/async/gpt_image_2.5/sunburst/text_to_image"
 GPT_IMAGE_25_SUNBURST_I2I_PATH = "/api/async/gpt_image_2.5/sunburst/image_to_image"
+GPT_IMAGE_26_FLARE_T2I_PATH = "/api/async/gpt_image_2.6/flare/text_to_image"
+GPT_IMAGE_26_FLARE_I2I_PATH = "/api/async/gpt_image_2.6/flare/image_to_image"
+GPT_IMAGE_26_SUNBURST_T2I_PATH = "/api/async/gpt_image_2.6/sunburst/text_to_image"
+GPT_IMAGE_26_SUNBURST_I2I_PATH = "/api/async/gpt_image_2.6/sunburst/image_to_image"
 
 GPT_IMAGE_25_QUALITY = ["low", "medium", "high", "xhigh", "max"]
 
@@ -133,6 +141,28 @@ def add_gpt_image_25_i2i_args(p):
 
 
 # ---------------------------------------------------------------------------
+# GPT Image 2.6
+# ---------------------------------------------------------------------------
+
+def add_gpt_image_26_t2i_args(p):
+    p.add_argument("--prompt", required=True, help="Text description of the image")
+    p.add_argument("--width", type=int, default=1024,
+                   help="Output width in pixels (default: 1024)")
+    p.add_argument("--height", type=int, default=1024,
+                   help="Output height in pixels (default: 1024)")
+    p.add_argument("--quality", default="low", choices=GPT_IMAGE_25_QUALITY,
+                   help="Image quality (default: low)")
+    p.add_argument("--n", type=int, default=1,
+                   help="Number of images to generate (1-10, default: 1)")
+
+
+def add_gpt_image_26_i2i_args(p):
+    add_gpt_image_26_t2i_args(p)
+    p.add_argument("--images", nargs="+", required=True,
+                   help="Reference image URLs or local paths")
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -167,12 +197,37 @@ TOOLS = {
         "build_body": build_gpt_image_25_i2i_body,
         "help": "GPT Image 2.5 Sunburst image-to-image (higher quality variant)",
     },
+    # 2.6 与 2.5 使用相同的请求字段，参数帮助按 2.6 契约单独定义。
+    "gpt-image-2.6-flare-text-to-image": {
+        "endpoint": GPT_IMAGE_26_FLARE_T2I_PATH,
+        "add_args": add_gpt_image_26_t2i_args,
+        "build_body": build_gpt_image_25_t2i_body,
+        "help": "GPT Image 2.6 Flare text-to-image",
+    },
+    "gpt-image-2.6-flare-image-to-image": {
+        "endpoint": GPT_IMAGE_26_FLARE_I2I_PATH,
+        "add_args": add_gpt_image_26_i2i_args,
+        "build_body": build_gpt_image_25_i2i_body,
+        "help": "GPT Image 2.6 Flare image-to-image",
+    },
+    "gpt-image-2.6-sunburst-text-to-image": {
+        "endpoint": GPT_IMAGE_26_SUNBURST_T2I_PATH,
+        "add_args": add_gpt_image_26_t2i_args,
+        "build_body": build_gpt_image_25_t2i_body,
+        "help": "GPT Image 2.6 Sunburst text-to-image",
+    },
+    "gpt-image-2.6-sunburst-image-to-image": {
+        "endpoint": GPT_IMAGE_26_SUNBURST_I2I_PATH,
+        "add_args": add_gpt_image_26_i2i_args,
+        "build_body": build_gpt_image_25_i2i_body,
+        "help": "GPT Image 2.6 Sunburst image-to-image",
+    },
 }
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="DreamAPI OpenAI — GPT Image 2 and GPT Image 2.5 image generation.",
+        description="DreamAPI OpenAI — GPT Image 2, 2.5, and 2.6 image generation.",
     )
 
     tool_sub = parser.add_subparsers(dest="tool")

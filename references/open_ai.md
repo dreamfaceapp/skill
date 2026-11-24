@@ -154,3 +154,24 @@ USD = sizeBase × qualityMultiplier × n (rounded up to 4 decimal places)
 | GPT Image 2.5 | 2048×2048 | high | $0.2700 |
 | GPT Image 2.5 | 2880×2880 | low | $0.0450 |
 | GPT Image 2.5 | 2880×2880 | max | $1.6200 |
+
+
+## GPT Image 2.6 Flare and Sunburst
+
+Flare supports fast image generation and editing. Sunburst is designed for detailed visual work.
+
+| Mode | CLI subcommand | API route |
+|---|---|---|
+| Flare text to image | `gpt-image-2.6-flare-text-to-image` | `/api/async/gpt_image_2.6/flare/text_to_image` |
+| Flare image to image | `gpt-image-2.6-flare-image-to-image` | `/api/async/gpt_image_2.6/flare/image_to_image` |
+| Sunburst text to image | `gpt-image-2.6-sunburst-text-to-image` | `/api/async/gpt_image_2.6/sunburst/text_to_image` |
+| Sunburst image to image | `gpt-image-2.6-sunburst-image-to-image` | `/api/async/gpt_image_2.6/sunburst/image_to_image` |
+
+For `run` or `submit`, supply `--prompt`. The optional `--width` and `--height` default to 1024 pixels each. The `--quality` choices are `low`, `medium`, `high`, `xhigh`, and `max`, with `low` as the default. Use `--n` for 1 to 10 output images, with 1 as the default. The image-to-image commands require `--images` with one or more URLs or local paths. The text-to-image commands take a prompt without reference images.
+
+```bash
+python scripts/open_ai.py gpt-image-2.6-flare-text-to-image run --prompt "A sunlit living room"
+python scripts/open_ai.py gpt-image-2.6-sunburst-image-to-image run --prompt "Add warm lighting to this room" --images ./room.png
+```
+
+Use `submit` to obtain the task ID without waiting. Use `query --task-id <id>` to retrieve the result of an existing task.
